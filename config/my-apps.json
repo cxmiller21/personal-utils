@@ -17,5 +17,12 @@
             "Slack",
             "iTerm"
         ]
+    },
+    "music": {
+        "path": "/Applications",
+        "apps": [
+            "Spotify",
+            "Reason"
+        ]
     }
 }
