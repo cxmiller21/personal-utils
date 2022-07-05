@@ -1,0 +1,21 @@
+{
+    "system": {
+        "path": "/System/Applications",
+        "apps": [
+            "Stocks"
+        ]
+    },
+    "installed": {
+        "path": "/Applications",
+        "apps": [
+            "Discord"
+        ],
+        "full": [
+            "Brave",
+            "Discord",
+            "Visual Studio Code",
+            "Slack",
+            "iTerm"
+        ]
+    }
+}
