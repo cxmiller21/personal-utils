@@ -1,17 +1,7 @@
 # My Personal CLI Utils
 
+A collection of CLI commands that I use to help automate common tasks. 
+
 ## Getting started
 
-1. Running
-    ```
-    python3 my_utils/main.py --help
-    ```
-
-## CLI Utils
-
-### Open Applications
-
-```sh
-# Open default system and installed applications specified in the "./config/my-apps.json" file.
-python3 my_utils/main.py start-up
-```
+Pleaese reference `./python3/README.md`

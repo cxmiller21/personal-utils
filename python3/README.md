@@ -19,3 +19,7 @@ poetry run my-utils -h
 ```shell
 poetry run test
 ```
+
+#### Disclaimer
+
+The youtube-dl commands are for example only! Illegially downloading music is wrong and I would never do it.
