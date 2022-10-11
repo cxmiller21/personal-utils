@@ -24,7 +24,7 @@ YDL_OPTIONS = {
     "progress_hooks": [yt_dl_hook],
 }
 
-def download_youtube_audio(url: str) -> None:
+def download_audio(url: str) -> None:
     with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
         ydl.download([url])
     log.info("Done downloading YouTube audio!")
@@ -33,10 +33,3 @@ def download_youtube_audio(url: str) -> None:
         log.info(f"Moving file {file} to Itunes Music folder...")
         src = f"/Users/coopermiller/Music/Music/Media.localized/Automatically Add to Music.localized/{file}"
         rename(f"{Path.cwd()}/{file}", src)
-
-
-def download_soundcloud_audio(url: str) -> None:
-    log.info(url)
-    # ydl_opts = {}
-    # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-    #     ydl.download([url])

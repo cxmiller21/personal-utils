@@ -14,11 +14,7 @@ app = typer.Typer()
 def open_apps(
     type: str = typer.Option("default", "--type", "-t", prompt="Open my apps")
 ):
-    """Start up applications
-
-    Args:
-        type (str): Type of applications to open based on my-apps.json key values.
-    """
+    """Start up applications"""
     log.info(f"Welcome! Starting up Applications...")
     match type:
         case "default":
@@ -32,18 +28,20 @@ def open_apps(
 
 
 @app.command()
-def dl_song(url: str = typer.Option("", "--url", prompt="YouTube URL to download")):
-    """Download YouTube audio
-
-    Args:
-        url (str): YouTube URL.
-    """
-    if "youtube.com" in url:
-        log.info(f"Downloading YouTube audio...")
-        my_music.download_youtube_audio(url)
-    if "soundcloud.com" in url:
-        log.info(f"Downloading SoundCloud audio...")
-        my_music.download_soundcloud_audio(url)
+def dl_song(
+    url: str = typer.Option(
+        ..., "--url", "-u", help="YouTube URL (wrapped in quotes) to download"
+    )
+):
+    """Download audio file and open in Itunes"""
+    sc_url = "https://soundcloud.com"
+    yt_url = "https://www.youtube.com"
+    if not url.startswith(sc_url) and not url.startswith(yt_url):
+        raise ValueError("URL must be for YouTube or SoundCloud URL")
+    
+    location = "YouTube" if "https://youtube.com" in url else "SoundCloud"
+    log.info(f"Downloading {location} audio...")
+    my_music.download_audio(url)
 
 
 if __name__ == "__main__":
