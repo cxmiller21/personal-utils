@@ -1,0 +1,15 @@
+{
+  "name": "personal-utils",
+  "version": "0.0.1",
+  "description": "My personal utils",
+  "scripts": {
+    "prepare": "husky install",
+    "release": "standard-version"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "husky": "^8.0.0",
+    "standard-version": "^9.5.0"
+  }
+}

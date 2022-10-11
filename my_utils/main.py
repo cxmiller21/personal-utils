@@ -1,32 +1,54 @@
+import logging
+import sys
+import util
 import typer
-import utils
+import my_music
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+log = logging.getLogger(__name__)
 
 app = typer.Typer()
 
 
 @app.command()
 def main():
-    typer.echo(f"Welcome!")
+    log.info(f"Welcome!")
 
 
 @app.command()
-def start_up(apps: str = "default"):
+def open_apps(
+    type: str = typer.Option("default", "--type", "-t", prompt="Open my apps")
+):
     """Start up applications
-    
-    Args:
-        apps (str): Type of applications to open based on my-apps.json key values.
-    """
-    typer.echo(f"Welcome! Starting up Applications...")
-    match apps:
-        case "default":
-            typer.echo(f"Opening System Applications...")
-            utils.open_apps("installed")
 
-            typer.echo(f"Opening Installed Applications...")
-            utils.open_apps("system")
+    Args:
+        type (str): Type of applications to open based on my-apps.json key values.
+    """
+    log.info(f"Welcome! Starting up Applications...")
+    match type:
+        case "default":
+            log.info(f"Opening System Applications...")
+            util.open_apps("installed")
+            log.info(f"Opening Installed Applications...")
+            util.open_apps("system")
         case "music":
-            typer.echo(f"Opening Music Applications...")
-            utils.open_apps("music")
+            log.info(f"Opening Music Applications...")
+            util.open_apps("music")
+
+
+@app.command()
+def dl_song(url: str = typer.Option("", "--url", prompt="YouTube URL to download")):
+    """Download YouTube audio
+
+    Args:
+        url (str): YouTube URL.
+    """
+    if "youtube.com" in url:
+        log.info(f"Downloading YouTube audio...")
+        my_music.download_youtube_audio(url)
+    if "soundcloud.com" in url:
+        log.info(f"Downloading SoundCloud audio...")
+        my_music.download_soundcloud_audio(url)
 
 
 if __name__ == "__main__":
