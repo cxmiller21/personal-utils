@@ -1,4 +1,4 @@
-from taco import util
+from my_utils import util
 
 def test_get_app_config_data():
     app_data = util.get_json_config("my-apps")

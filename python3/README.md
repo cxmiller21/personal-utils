@@ -2,6 +2,20 @@
 
 ## Getting Started
 
+### Run CLI commands
+
 ```shell
-poetry run python main.py --help
+poetry install
+
+# Call with Python
+poetry run python my_utils/main.py --help
+
+# Call with Poetry
+poetry run my-utils -h
+```
+
+### Run Tests
+
+```shell
+poetry run test
 ```

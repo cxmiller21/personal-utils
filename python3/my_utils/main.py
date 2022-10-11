@@ -1,18 +1,13 @@
 import logging
 import sys
-import util
 import typer
-import my_music
+from my_utils import my_music
+from my_utils import util
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 log = logging.getLogger(__name__)
 
 app = typer.Typer()
-
-
-@app.command()
-def main():
-    log.info(f"Welcome!")
 
 
 @app.command()
