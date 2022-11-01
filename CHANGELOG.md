@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/cxmiller21/personal-utils/compare/v0.0.3...v0.0.4) (2022-11-01)
+
+
+### Features
+
+* update npm run release ([564935e](https://github.com/cxmiller21/personal-utils/commit/564935e65dc4b5f5fd108fed855fe6bf34058dfa))
+
 ### [0.0.3](https://github.com/cxmiller21/personal-utils/compare/v0.0.2...v0.0.3) (2022-11-01)
 
 
