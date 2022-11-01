@@ -4,7 +4,7 @@
   "description": "My personal utils",
   "scripts": {
     "prepare": "husky install",
-    "release": "standard-version"
+    "release": "standard-version && git push --follow-tags origin master"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
