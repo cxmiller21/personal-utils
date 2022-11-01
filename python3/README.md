@@ -12,6 +12,9 @@ poetry run python my_utils/main.py --help
 
 # Call with Poetry
 poetry run my-utils -h
+
+# Create project in editable mode (call from terminal as my-utls)
+pip install -e .
 ```
 
 ### Run Tests
