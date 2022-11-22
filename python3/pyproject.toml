@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "my-utils"
+name = "cm-util"
 version = "0.1.0"
 description = ""
 authors = ["Cooper <cooperxmiller@gmail.com>"]
@@ -17,5 +17,5 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-my-utils = "my_utils.main:app"
+cm-util = "cm_util.main:app"
 test = "scripts:run_test"

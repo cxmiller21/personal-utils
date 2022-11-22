@@ -2,8 +2,8 @@ import logging
 import sys
 import typer
 from pathlib import Path
-from my_utils import music
-from my_utils import util
+from cm_util import music
+from cm_util import util
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 log = logging.getLogger(__name__)

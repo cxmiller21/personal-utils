@@ -8,10 +8,10 @@
 poetry install
 
 # Call with Python
-poetry run python my_utils/main.py --help
+poetry run python cm_util/main.py --help
 
 # Call with Poetry
-poetry run my-utils -h
+poetry run cm-util -h
 
 # Create project in editable mode (call from terminal as my-utls)
 pip install -e .

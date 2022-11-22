@@ -1,4 +1,4 @@
-from my_utils import util
+from cm_util import util
 
 def test_get_app_config_data():
     app_data = util.get_json_config("my-apps")
