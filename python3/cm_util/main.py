@@ -1,9 +1,9 @@
 import logging
 import sys
 import typer
+
 from pathlib import Path
-from cm_util import music
-from cm_util import util
+from cm_util import music, util
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -31,24 +31,46 @@ def open_apps(
 @app.command()
 def dl_song(
     url: str = typer.Option(
-        ..., "--url", "-u", help="YouTube URL (wrapped in quotes) to download"
+        ..., "--url", "-u", help="URL wrapped in quotes '' to download"
     )
 ) -> None:
     """Download audio file and open in Itunes"""
-    sc_url = "https://soundcloud.com"
-    yt_url = "https://www.youtube.com"
-    if not url.startswith(sc_url) and not url.startswith(yt_url):
-        raise ValueError("URL must be for YouTube or SoundCloud URL")
+    # Optionally add regex to check if url is valid
+    sc_url = "soundcloud.com/"
+    yt_url = "youtube.com/"
 
-    location = "YouTube" if "https://youtube.com" in url else "SoundCloud"
-    log.info(f"Downloading {location} audio...")
-    music.download_audio(url)
+    media_company = None
+    if yt_url in url:
+        media_company = "YouTube"
+    elif sc_url in url:
+        media_company = "SoundCloud"
+
+    if not media_company:
+        log.error(f"URL: {url} is not a valid YouTube or SoundCloud URL")
+        raise ValueError("Invalid URL")
+
+    log.info(f"Downloading {media_company} audio...")
+    return music.download_mp3(url, media_company)
+
+
+@app.command()
+def dl_sc_user_likes(
+    username: str = typer.Option(
+        ..., "--username", "-un", help="SoundCloud username to download likes from"
+    )
+) -> None:
+    """Download audio file and open in Itunes"""
+    log.info(f"Downloading SoundCloud user likes: {username}...")
+    music.download_soundcloud_user_likes(username)
 
 
 @app.command()
 def order_files(
     path_to_folder: str = typer.Option(
         ..., "--path", "-p", help="Absolute path to folder to order files"
+    ),
+    file_type: str = typer.Option(
+        ..., "--file-type", "-ft", help="File type to filter by - Pass 'all' to include all files"
     ),
     order_by: str = typer.Option(
         ..., "--order-by", "-ob", help="Order files by name, date, or size"
@@ -61,7 +83,7 @@ def order_files(
         raise ValueError("Order by must be either 'name', 'date', 'type', or 'size'")
 
     log.info(f"Ordering files in folder '{path_to_folder}' by '{order_by}'...")
-    util.sort_file_naming_convention(path_to_folder, order_by)
+    util.sort_files_by(path_to_folder, file_type, order_by)
 
 
 if __name__ == "__main__":
