@@ -261,7 +261,7 @@ class TestYtDlpDownload(unittest.TestCase):
 
 class TestMoveMp3FilesToItunes(unittest.TestCase):
 
-# def move_mp3_files_to_itunes():
+# def move_mp3_files_to_music_folder():
 #     """TBD"""
 #     # mp3_file_paths = list(Path(".").glob("*.mp3"))
 
@@ -278,15 +278,15 @@ class TestMoveMp3FilesToItunes(unittest.TestCase):
 #         dest = itunes_music_path / file
 #         file_path.rename(dest)
 
-    def test_move_mp3_files_to_itunes(self):
+    def test_move_mp3_files_to_music_folder(self):
         """Test moving mp3 files to itunes music folder"""
-        util.move_mp3_files_to_itunes = MagicMock()
-        util.move_mp3_files_to_itunes()
-        util.move_mp3_files_to_itunes.assert_called_once()
+        util.move_mp3_files_to_music_folder = MagicMock()
+        util.move_mp3_files_to_music_folder()
+        util.move_mp3_files_to_music_folder.assert_called_once()
 
     def test_itunes_music_folder_not_exist(self):
         with self.assertRaises(ValueError) as cm:
-            util.move_mp3_files_to_itunes("invalid_path")
+            util.move_mp3_files_to_music_folder("invalid_path")
         self.assertEqual(
           "Path invalid_path does not exist",
           str(cm.exception)

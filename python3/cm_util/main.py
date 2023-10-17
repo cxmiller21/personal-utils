@@ -15,7 +15,7 @@ app = typer.Typer()
 def open_apps(
     type: str = typer.Option("default", "--type", "-t", prompt="Open my apps")
 ) -> None:
-    """Start up applications"""
+    """Start up basic applications"""
     log.info(f"Welcome! Starting up Applications...")
     match type:
         case "default":
@@ -34,7 +34,7 @@ def dl_song(
         ..., "--url", "-u", help="URL wrapped in quotes '' to download"
     )
 ) -> None:
-    """Download audio file and open in Itunes"""
+    """Download audio file and open in Apple Music"""
     # Optionally add regex to check if url is valid
     sc_url = "soundcloud.com/"
     yt_url = "youtube.com/"
@@ -59,7 +59,7 @@ def dl_sc_user_likes(
         ..., "--username", "-un", help="SoundCloud username to download likes from"
     )
 ) -> None:
-    """Download audio file and open in Itunes"""
+    """Download a playlist of SoundCloud user likes and open them in Apple Music"""
     log.info(f"Downloading SoundCloud user likes: {username}...")
     music.download_soundcloud_user_likes(username)
 
@@ -76,11 +76,11 @@ def order_files(
         ..., "--order-by", "-ob", help="Order files by name, date, or size"
     ),
 ) -> None:
-    """Order files by name, date, or size"""
+    """Order files by name or created on date"""
     if not Path(path_to_folder).exists():
         raise ValueError("Path must be a valid directory")
-    if order_by not in ["name", "date", "type", "size"]:
-        raise ValueError("Order by must be either 'name', 'date', 'type', or 'size'")
+    if order_by not in ["name", "date"]:
+        raise ValueError("Order by must be either 'name', 'date'")
 
     log.info(f"Ordering files in folder '{path_to_folder}' by '{order_by}'...")
     util.sort_files_by(path_to_folder, file_type, order_by)
