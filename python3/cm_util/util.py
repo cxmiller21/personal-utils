@@ -2,7 +2,7 @@ import logging
 import json
 import yt_dlp
 
-from os import system, environ
+from os import system
 from pathlib import Path
 
 log = logging.getLogger(__name__)

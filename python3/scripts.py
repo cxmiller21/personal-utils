@@ -8,8 +8,6 @@ def run_test():
 
 def run_coverage():
     """Run coverage"""
-    # omit="--omit='tests/*'"
-    omit = ""
     subprocess.run(["coverage", "run", "-m", "pytest"])
     subprocess.run(["coverage", "report", "-m"])
     subprocess.run(["coverage", "html"])

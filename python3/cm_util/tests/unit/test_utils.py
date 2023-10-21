@@ -3,7 +3,6 @@ import tempfile
 import unittest
 
 from cm_util import util
-from os import environ
 from pathlib import Path
 from unittest.mock import patch, call, Mock, MagicMock
 
@@ -12,7 +11,7 @@ log = logging.getLogger(__name__)
 
 class TestGetItunesMusicFolder(unittest.TestCase):
     def test_get_itunes_music_folder(self):
-        dev_user = environ["DEV_USER"]
+        dev_user = util.get_comp_user_name()
         expected_path = f"/Users/{dev_user}/Music/Music/Media.localized/Automatically Add to Music.localized"
         result = util.get_itunes_music_folder()
         self.assertEqual(

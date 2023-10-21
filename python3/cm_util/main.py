@@ -3,7 +3,7 @@ import sys
 import typer
 
 from pathlib import Path
-from cm_util import music, util
+from cm_util import music, video, util
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -51,6 +51,17 @@ def dl_song(
 
     log.info(f"Downloading {media_company} audio...")
     return music.download_mp3(url, media_company)
+
+
+@app.command()
+def dl_video(
+    url: str = typer.Option(
+        ..., "--url", "-u", help="URL wrapped in quotes '' to download"
+    )
+) -> None:
+    """Download video file and open in Apple Music"""
+    log.info(f"Downloading YouTube video...")
+    return video.download_youtube_video(url)
 
 
 @app.command()
