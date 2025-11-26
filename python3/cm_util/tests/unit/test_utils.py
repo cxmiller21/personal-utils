@@ -42,15 +42,16 @@ class TestGetYtDLOptions(unittest.TestCase):
         media_type = "video"
         options = util.get_yt_dl_options(media_type)
 
-        expected_options = {
-            "format": "best",
-            "ignoreerrors": True,
-            "outtmpl": "%(title)s.%(ext)s",
-        }
+        # Test required keys
+        self.assertEqual(options["format"], "best*")
+        self.assertEqual(options["ignoreerrors"], False)
+        self.assertEqual(options["outtmpl"], "%(title)s.%(ext)s")
+        self.assertEqual(options["merge_output_format"], "mp4")
 
-        self.assertEqual(
-            options, expected_options, "Video options should match expected"
-        )
+        # Progress hooks should be present
+        self.assertIn("progress_hooks", options)
+        # Format sort should be present
+        self.assertIn("format_sort", options)
 
     def test_invalid_media_type(self):
         media_type = "invalid_type"
@@ -71,17 +72,18 @@ class TestGetJsonConfig(unittest.TestCase):
         assert type(app_data["system"]["apps"]) == list
 
 
-class TestYtDlHook(unittest.TestCase):
-    def test_yt_dl_hook(self):
+class TestYtDlProgressHook(unittest.TestCase):
+    def test_yt_dl_progress_hook_finished(self):
         # Define a sample download dictionary
         download_info = {"status": "finished", "filename": "example_audio.mp3"}
 
         # Capture the log output for testing
-        with self.assertLogs("test", level="INFO") as cm:
-            logger = logging.getLogger("test")
-            util.yt_dl_hook(download_info, logger)
-        msg = f"INFO:test:Done downloading, now converting file {download_info['filename']}"
-        self.assertEqual(cm.output, [msg])
+        with self.assertLogs("cm_util.util", level="INFO") as cm:
+            util.yt_dl_progress_hook(download_info)
+
+        # Check that the correct log message was generated
+        self.assertTrue(any("Done downloading" in msg for msg in cm.output))
+        self.assertTrue(any("example_audio.mp3" in msg for msg in cm.output))
 
 
 class TestCleanUrl(unittest.TestCase):
@@ -202,9 +204,12 @@ class TestYtDlpDownload(unittest.TestCase):
     def setUp(self):
         self.yt_url = "https://youtube.com/some_video_url"
 
+    @patch("cm_util.util.tag_mp3_file")
+    @patch("cm_util.history_manager.add_to_history")
+    @patch("cm_util.history_manager.is_downloaded")
     @patch("cm_util.util.get_yt_dl_options")
     @patch("yt_dlp.YoutubeDL")
-    def test_download_mp3(self, mock_YoutubeDL, mock_get_options):
+    def test_download_mp3(self, mock_YoutubeDL, mock_get_options, mock_is_downloaded, mock_add_to_history, mock_tag_mp3):
         # Mock the options to avoid yt_dlp.parse_options issues
         mock_get_options.return_value = {
             "format": "bestaudio/best",
@@ -212,9 +217,12 @@ class TestYtDlpDownload(unittest.TestCase):
             "outtmpl": "%(title)s.%(ext)s",
         }
 
-        # Mock the YoutubeDL instance and its download method
+        # Mock history check
+        mock_is_downloaded.return_value = False
+
+        # Mock the YoutubeDL instance and its extract_info method
         ydl_instance = MagicMock()
-        ydl_instance.download.return_value = 0
+        ydl_instance.extract_info.return_value = {"title": "Test Song", "upload_date": "20230101"}
         mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
 
         url = self.yt_url
@@ -223,17 +231,22 @@ class TestYtDlpDownload(unittest.TestCase):
 
         util.yt_dlp_download(url, media_company, media_type)
 
-        ydl_instance.download.assert_called_once_with([url])
+        ydl_instance.extract_info.assert_called_once_with(url, download=True)
         mock_get_options.assert_called_once_with(media_type)
+        mock_add_to_history.assert_called_once()
 
+    @patch("cm_util.history_manager.add_to_history")
+    @patch("cm_util.history_manager.is_downloaded")
     @patch("yt_dlp.YoutubeDL")
-    def test_download_video(self, mock_YoutubeDL):
-        # Mock the clean_url function
+    def test_download_video(self, mock_YoutubeDL, mock_is_downloaded, mock_add_to_history):
+        # Mock history check
+        mock_is_downloaded.return_value = False
+
         url = self.yt_url
 
-        # Mock the YoutubeDL instance and its download method
+        # Mock the YoutubeDL instance and its extract_info method
         ydl_instance = MagicMock()
-        ydl_instance.download.return_value = 0
+        ydl_instance.extract_info.return_value = {"title": "Test Video"}
         mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
 
         media_company = "youtube"
@@ -241,14 +254,19 @@ class TestYtDlpDownload(unittest.TestCase):
 
         util.yt_dlp_download(url, media_company, media_type)
 
-        ydl_instance.download.assert_called_once_with([url])
+        ydl_instance.extract_info.assert_called_once_with(url, download=True)
+        mock_add_to_history.assert_called_once()
 
+    @patch("cm_util.history_manager.is_downloaded")
     @patch("yt_dlp.YoutubeDL")
-    def test_download_error(self, mock_YoutubeDL):
+    def test_download_error(self, mock_YoutubeDL, mock_is_downloaded):
+        # Mock history check
+        mock_is_downloaded.return_value = False
+
         url = "invalid-url"
         ydl_instance = MagicMock()
-        # Mock download to raise an exception
-        ydl_instance.download.side_effect = Exception("Download failed")
+        # Mock extract_info to raise an exception
+        ydl_instance.extract_info.side_effect = Exception("Download failed")
         mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
 
         media_company = "youtube"
@@ -259,10 +277,14 @@ class TestYtDlpDownload(unittest.TestCase):
 
         self.assertIn("Download failed", str(cm.exception))
 
+    @patch("cm_util.history_manager.is_downloaded")
     @patch("cm_util.util.get_yt_dl_options")
     @patch("yt_dlp.YoutubeDL")
-    def test_download_non_zero_error_code(self, mock_YoutubeDL, mock_get_options):
-        """Test that non-zero error codes from yt-dlp are handled correctly"""
+    def test_download_non_zero_error_code(self, mock_YoutubeDL, mock_get_options, mock_is_downloaded):
+        """Test that extraction failures from yt-dlp are handled correctly"""
+        # Mock history check
+        mock_is_downloaded.return_value = False
+
         # Mock the options to avoid yt_dlp.parse_options issues
         mock_get_options.return_value = {
             "format": "bestaudio/best",
@@ -272,8 +294,8 @@ class TestYtDlpDownload(unittest.TestCase):
 
         url = "https://youtube.com/some_video"
         ydl_instance = MagicMock()
-        # Mock download to return non-zero error code
-        ydl_instance.download.return_value = 1
+        # Mock extract_info to return None (failed extraction)
+        ydl_instance.extract_info.side_effect = Exception("Extraction failed")
         mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
 
         media_company = "youtube"
@@ -282,7 +304,7 @@ class TestYtDlpDownload(unittest.TestCase):
         with self.assertRaises(Exception) as cm:
             util.yt_dlp_download(url, media_company, media_type)
 
-        self.assertIn("error code: 1", str(cm.exception).lower())
+        self.assertIn("extraction failed", str(cm.exception).lower())
 
 
 class TestMoveMp3FilesToItunes(unittest.TestCase):

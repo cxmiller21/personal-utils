@@ -96,7 +96,7 @@ class TestDownloadYoutubeVideo(unittest.TestCase):
         video.download_youtube_video(url)
 
         # Verify yt_dlp_download was called with correct parameters
-        mock_yt_dlp_download.assert_called_once_with(url, "YouTube", "video")
+        mock_yt_dlp_download.assert_called_once_with(url, "YouTube", "video", dry_run=False, output_dir=None, force=False)
 
         # Verify files were moved
         mock_move_files.assert_called_once()
