@@ -1,4 +1,5 @@
 import logging
+import re
 import sys
 import typer
 
@@ -28,6 +29,35 @@ def open_apps(
             util.open_apps("music")
 
 
+def validate_url(url: str) -> tuple[bool, str | None]:
+    """Validate URL and determine media company
+
+    Args:
+        url (str): URL to validate
+
+    Returns:
+        tuple[bool, str | None]: (is_valid, media_company)
+    """
+    # YouTube URL patterns
+    youtube_patterns = [
+        r"^https?://(www\.)?youtube\.com/watch\?v=[\w-]+",
+        r"^https?://(www\.)?youtube\.com/playlist\?list=[\w-]+",
+        r"^https?://youtu\.be/[\w-]+",
+    ]
+
+    # SoundCloud URL pattern
+    soundcloud_pattern = r"^https?://(www\.)?soundcloud\.com/.+"
+
+    for pattern in youtube_patterns:
+        if re.match(pattern, url):
+            return True, "YouTube"
+
+    if re.match(soundcloud_pattern, url):
+        return True, "SoundCloud"
+
+    return False, None
+
+
 @app.command()
 def dl_song(
     url: str = typer.Option(
@@ -35,19 +65,14 @@ def dl_song(
     )
 ) -> None:
     """Download audio file and open in Apple Music"""
-    # Optionally add regex to check if url is valid
-    sc_url = "soundcloud.com/"
-    yt_url = "youtube.com/"
+    is_valid, media_company = validate_url(url)
 
-    media_company = None
-    if yt_url in url:
-        media_company = "YouTube"
-    elif sc_url in url:
-        media_company = "SoundCloud"
-
-    if not media_company:
+    if not is_valid or not media_company:
         log.error(f"URL: {url} is not a valid YouTube or SoundCloud URL")
-        raise ValueError("Invalid URL")
+        raise ValueError(
+            "Invalid URL. Expected format: "
+            "https://youtube.com/watch?v=... or https://soundcloud.com/..."
+        )
 
     log.info(f"Downloading {media_company} audio...")
     return music.download_mp3(url, media_company)
@@ -59,7 +84,15 @@ def dl_video(
         ..., "--url", "-u", help="URL wrapped in quotes '' to download"
     )
 ) -> None:
-    """Download video file and open in Apple Music"""
+    """Download video file"""
+    is_valid, media_company = validate_url(url)
+
+    if not is_valid or media_company != "YouTube":
+        log.error(f"URL: {url} is not a valid YouTube URL")
+        raise ValueError(
+            "Invalid URL. Expected format: https://youtube.com/watch?v=..."
+        )
+
     log.info(f"Downloading YouTube video...")
     return video.download_youtube_video(url)
 

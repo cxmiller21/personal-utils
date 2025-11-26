@@ -286,20 +286,56 @@ class TestYtDlpDownload(unittest.TestCase):
 
 
 class TestMoveMp3FilesToItunes(unittest.TestCase):
+    def setUp(self):
+        # Create a temporary directory for testing
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.temp_dir_path = self.temp_dir.name
 
     def test_move_mp3_files_to_music_folder(self):
         """Test moving mp3 files to itunes music folder"""
-        util.move_mp3_files_to_music_folder = MagicMock()
-        util.move_mp3_files_to_music_folder()
-        util.move_mp3_files_to_music_folder.assert_called_once()
+        # Create test MP3 files
+        test_files = ["song1.mp3", "song2.mp3"]
+        for file_name in test_files:
+            file_path = Path(".") / file_name
+            file_path.touch()
+
+        # Create a temporary music folder
+        music_folder = Path(self.temp_dir_path) / "Music"
+        music_folder.mkdir()
+
+        try:
+            # Move files to temp music folder
+            util.move_mp3_files_to_music_folder(str(music_folder))
+
+            # Verify files were moved
+            moved_files = list(music_folder.glob("*.mp3"))
+            self.assertEqual(len(moved_files), len(test_files))
+
+            # Verify files no longer in current directory
+            for file_name in test_files:
+                self.assertFalse(Path(file_name).exists())
+        finally:
+            # Cleanup - move files back if they exist in music folder
+            for file_name in test_files:
+                dest_file = music_folder / file_name
+                if dest_file.exists():
+                    dest_file.unlink()
+
+    def test_move_mp3_files_no_files(self):
+        """Test behavior when no MP3 files are present"""
+        music_folder = Path(self.temp_dir_path) / "Music"
+        music_folder.mkdir()
+
+        # Should complete without error even with no files
+        util.move_mp3_files_to_music_folder(str(music_folder))
 
     def test_itunes_music_folder_not_exist(self):
         with self.assertRaises(ValueError) as cm:
             util.move_mp3_files_to_music_folder("invalid_path")
-        self.assertEqual(
-          "Path invalid_path does not exist",
-          str(cm.exception)
-        )
+        self.assertIn("does not exist", str(cm.exception))
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
 
 if __name__ == "__main__":

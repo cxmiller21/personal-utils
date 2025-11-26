@@ -74,10 +74,13 @@ The CLI is built with Typer and organized as follows:
 
 ### Important Implementation Details
 
-- The project assumes macOS (uses `system("open ...")` and macOS-specific paths)
-- URL cleaning in `util.clean_url()` handles backslash escaping from terminal copy/paste
-- Chrome browser cookies are required for certain YouTube downloads
+- **macOS-only**: Uses `subprocess.run(["open", ...])` for app launching and macOS-specific paths
+- **URL Validation**: Regex-based validation in `main.validate_url()` for YouTube and SoundCloud URLs
+- **Chrome Cookies**: Optional Chrome browser cookie extraction for authenticated downloads (gracefully degrades if Chrome not installed)
+- **Retry Logic**: Downloads retry up to 3 times with 2-second delays between attempts
+- **Config Resolution**: Config files resolved relative to module location (`__file__`), not CWD
 - MP3 files are processed with FFmpeg for audio extraction (192kbps, 44.1kHz, stereo)
+- Video files automatically moved to ~/Downloads after download
 
 ## Working with This Codebase
 
@@ -91,6 +94,16 @@ The CLI is built with Typer and organized as follows:
 - yt-dlp CLI reference: Lines 33-34 in `util.py` show equivalent CLI command
 
 ### Testing
-- Unit tests use pytest
+- Unit tests use pytest with 47+ comprehensive tests
+- Test coverage includes: util.py, music.py, video.py, main.py (URL validation)
 - Test files are in `cm_util/tests/files/` (e.g., test MP3s)
 - Coverage config omits tests and `__init__.py` files (see `pyproject.toml`)
+- Run tests: `poetry run pytest` or `poetry run test`
+- Run coverage: `poetry run coverage`
+
+### Error Handling & Robustness
+- **Retry Logic**: `yt_dlp_download()` retries failed downloads 3 times (configurable)
+- **Chrome Cookies**: Gracefully handles missing Chrome browser
+- **Config Files**: Validates config file existence before reading
+- **URL Validation**: Comprehensive regex patterns for YouTube/SoundCloud URLs
+- **Subprocess Safety**: Uses `subprocess.run()` instead of `os.system()` for security
