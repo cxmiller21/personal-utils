@@ -144,9 +144,12 @@ def yt_dlp_download(url: str, media_company: str, media_type: str) -> None:
     try:
         with yt_dlp.YoutubeDL(options) as ydl:
             error_code = ydl.download([cleaned_url])
+            if error_code != 0:
+                log.error(f"Error code: {error_code} - Failed to download url: {url}")
+                raise Exception(f"Download failed with error code: {error_code}")
     except Exception as e:
-        log.error(f"Error code: {error_code} - Unable to download url: {url}")
-        raise Exception(e)
+        log.error(f"Unable to download url: {url} - {str(e)}")
+        raise
     log.info(f"Successfully downloaded {media_company} {media_type}!")
 
 

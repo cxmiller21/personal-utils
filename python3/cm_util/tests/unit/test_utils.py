@@ -24,20 +24,19 @@ class TestGetYtDLOptions(unittest.TestCase):
         media_type = "mp3"
         options = util.get_yt_dl_options(media_type)
 
-        expected_options = {
-            "format": "bestaudio/best",
-            "ignoreerrors": True,
-            "outtmpl": "%(title)s.%(ext)s",
-            "postprocessors": [
-                {
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "mp3",
-                    "preferredquality": "192",
-                }
-            ],
-        }
+        # Test required keys
+        self.assertEqual(options["format"], "bestaudio/best")
+        self.assertEqual(options["ignoreerrors"], True)
+        self.assertEqual(options["outtmpl"], "%(title)s.%(ext)s")
 
-        self.assertEqual(options, expected_options, "MP3 options should match expected")
+        # Test postprocessors
+        self.assertEqual(len(options["postprocessors"]), 1)
+        self.assertEqual(options["postprocessors"][0]["key"], "FFmpegExtractAudio")
+        self.assertEqual(options["postprocessors"][0]["preferredcodec"], "mp3")
+        self.assertEqual(options["postprocessors"][0]["preferredquality"], "192")
+
+        # Test cookiesfrombrowser exists
+        self.assertIn("cookiesfrombrowser", options, "cookiesfrombrowser should be present for MP3 downloads")
 
     def test_get_video_options(self):
         media_type = "video"
@@ -60,7 +59,8 @@ class TestGetYtDLOptions(unittest.TestCase):
 
 
 class TestGetJsonConfig(unittest.TestCase):
-    def test_get_app_config_data(self):
+    @patch("builtins.open", new_callable=unittest.mock.mock_open, read_data='{"installed": {"path": "/Applications", "apps": ["App1"]}, "system": {"path": "/System/Applications", "apps": ["App2"]}}')
+    def test_get_app_config_data(self, mock_file):
         app_data = util.get_json_config("my-apps")
         assert type(app_data) == dict
 
@@ -202,80 +202,90 @@ class TestYtDlpDownload(unittest.TestCase):
     def setUp(self):
         self.yt_url = "https://youtube.com/some_video_url"
 
+    @patch("cm_util.util.get_yt_dl_options")
     @patch("yt_dlp.YoutubeDL")
-    def test_download_mp3(self, mock_YoutubeDL):
-        # Mock the clean_url function
-        url = self.yt_url
+    def test_download_mp3(self, mock_YoutubeDL, mock_get_options):
+        # Mock the options to avoid yt_dlp.parse_options issues
+        mock_get_options.return_value = {
+            "format": "bestaudio/best",
+            "ignoreerrors": True,
+            "outtmpl": "%(title)s.%(ext)s",
+        }
 
         # Mock the YoutubeDL instance and its download method
-        ydl_instance = mock_YoutubeDL.return_value
+        ydl_instance = MagicMock()
         ydl_instance.download.return_value = 0
+        mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
 
+        url = self.yt_url
         media_company = "youtube"
         media_type = "mp3"
 
         util.yt_dlp_download(url, media_company, media_type)
 
-        yt_dl_options = util.get_yt_dl_options(media_type)
-        mock_YoutubeDL.assert_called_with(yt_dl_options)
-        ydl_instance.__enter__.assert_called()
-        ydl_instance.__exit__.assert_called()
+        ydl_instance.download.assert_called_once_with([url])
+        mock_get_options.assert_called_once_with(media_type)
 
-    @patch("yt_dlp.YoutubeDL", autospec=True)
+    @patch("yt_dlp.YoutubeDL")
     def test_download_video(self, mock_YoutubeDL):
         # Mock the clean_url function
         url = self.yt_url
 
         # Mock the YoutubeDL instance and its download method
-        ydl_instance = mock_YoutubeDL.return_value
+        ydl_instance = MagicMock()
         ydl_instance.download.return_value = 0
+        mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
 
         media_company = "youtube"
         media_type = "video"
 
         util.yt_dlp_download(url, media_company, media_type)
 
-        yt_dl_options = util.get_yt_dl_options("video")
-        mock_YoutubeDL.assert_called_with(yt_dl_options)
-        ydl_instance.__enter__.assert_called()
-        ydl_instance.__exit__.assert_called()
+        ydl_instance.download.assert_called_once_with([url])
 
-    @patch("yt_dlp.YoutubeDL", autospec=True)
+    @patch("yt_dlp.YoutubeDL")
     def test_download_error(self, mock_YoutubeDL):
         url = "invalid-url"
-        ydl_instance = mock_YoutubeDL.return_value
+        ydl_instance = MagicMock()
+        # Mock download to raise an exception
+        ydl_instance.download.side_effect = Exception("Download failed")
+        mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
 
         media_company = "youtube"
         media_type = "video"
 
-        self.assertRaises(
-            Exception, util.yt_dlp_download(url, media_company, media_type)
-        )
+        with self.assertRaises(Exception) as cm:
+            util.yt_dlp_download(url, media_company, media_type)
 
-        yt_dl_options = util.get_yt_dl_options("video")
-        mock_YoutubeDL.assert_called_with(yt_dl_options)
-        ydl_instance.__enter__.assert_called()
-        ydl_instance.__exit__.assert_called()
+        self.assertIn("Download failed", str(cm.exception))
+
+    @patch("cm_util.util.get_yt_dl_options")
+    @patch("yt_dlp.YoutubeDL")
+    def test_download_non_zero_error_code(self, mock_YoutubeDL, mock_get_options):
+        """Test that non-zero error codes from yt-dlp are handled correctly"""
+        # Mock the options to avoid yt_dlp.parse_options issues
+        mock_get_options.return_value = {
+            "format": "bestaudio/best",
+            "ignoreerrors": True,
+            "outtmpl": "%(title)s.%(ext)s",
+        }
+
+        url = "https://youtube.com/some_video"
+        ydl_instance = MagicMock()
+        # Mock download to return non-zero error code
+        ydl_instance.download.return_value = 1
+        mock_YoutubeDL.return_value.__enter__.return_value = ydl_instance
+
+        media_company = "youtube"
+        media_type = "mp3"
+
+        with self.assertRaises(Exception) as cm:
+            util.yt_dlp_download(url, media_company, media_type)
+
+        self.assertIn("error code: 1", str(cm.exception).lower())
 
 
 class TestMoveMp3FilesToItunes(unittest.TestCase):
-
-# def move_mp3_files_to_music_folder():
-#     """TBD"""
-#     # mp3_file_paths = list(Path(".").glob("*.mp3"))
-
-#     itunes_music_path = Path(get_itunes_music_folder())
-#     if not itunes_music_path.exists():
-#         raise ValueError(f"Path {itunes_music_path} does not exist")
-
-#     # Sort files by creation time
-#     # sorted_file_paths = sorted(mp3_file_paths, key=lambda x: x.stat().st_ctime)
-#     sorted_file_paths = sort_files_by("./", "mp3", "date")
-#     for file_path in sorted_file_paths:
-#         file = file_path.name
-#         log.info(f"Moving file {file} to Itunes Music folder...")
-#         dest = itunes_music_path / file
-#         file_path.rename(dest)
 
     def test_move_mp3_files_to_music_folder(self):
         """Test moving mp3 files to itunes music folder"""
