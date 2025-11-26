@@ -77,9 +77,11 @@ def get_yt_dl_options(media_type: str, show_progress: bool = True) -> dict:
 
     if media_type == "video":
         options = {
-            "format": "best",
-            "ignoreerrors": True,
+            "format": "best*",
+            "format_sort": ["vcodec:h264", "res", "acodec:m4a"],
+            "ignoreerrors": False,
             "outtmpl": "%(title)s.%(ext)s",
+            "merge_output_format": "mp4",
         }
 
         # Add progress hook if enabled

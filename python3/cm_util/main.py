@@ -172,6 +172,7 @@ def dl_video(
         )
 
     log.info(f"Downloading YouTube video...")
+    log.info(f"State: dry_run={state.dry_run}, output_dir={state.output_dir}, force={state.force}")
     return video.download_youtube_video(url, dry_run=state.dry_run, output_dir=state.output_dir, force=state.force)
 
 
