@@ -5,11 +5,94 @@ import typer
 
 from pathlib import Path
 from cm_util import music, video, util
+from cm_util.config_manager import load_config, show_config
+from typing import Optional
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)8s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 log = logging.getLogger(__name__)
 
 app = typer.Typer()
+
+# Global state
+class State:
+    verbose: bool = False
+    quiet: bool = False
+    dry_run: bool = False
+    output_dir: Optional[str] = None
+    force: bool = False
+
+state = State()
+
+def version_callback(value: bool):
+    """Show version and exit"""
+    if value:
+        from cm_util import __version__
+        typer.echo(f"cm-util version {__version__}")
+        raise typer.Exit()
+
+def verbosity_callback(ctx: typer.Context, param: typer.CallbackParam, value: bool):
+    """Set logging level based on verbosity flags"""
+    if value:
+        if param.name == "verbose":
+            state.verbose = True
+            logging.getLogger().setLevel(logging.DEBUG)
+            log.debug("Verbose mode enabled")
+        elif param.name == "quiet":
+            state.quiet = True
+            logging.getLogger().setLevel(logging.ERROR)
+    return value
+
+@app.callback()
+def main(
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v",
+        help="Enable verbose output (DEBUG level)",
+        callback=verbosity_callback,
+        is_eager=True
+    ),
+    quiet: bool = typer.Option(
+        False, "--quiet", "-q",
+        help="Suppress all output except errors",
+        callback=verbosity_callback,
+        is_eager=True
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run",
+        help="Show what would be done without actually doing it"
+    ),
+    output_dir: Optional[str] = typer.Option(
+        None, "--output-dir", "-o",
+        help="Custom output directory for downloads"
+    ),
+    force: bool = typer.Option(
+        False, "--force", "-f",
+        help="Force download even if URL exists in history"
+    ),
+    version: Optional[bool] = typer.Option(
+        None, "--version",
+        help="Show version and exit",
+        callback=version_callback,
+        is_eager=True
+    ),
+):
+    """
+    Personal CLI utility for downloading media and managing files on macOS.
+    """
+    # Load config and merge with CLI options (CLI takes precedence)
+    config = load_config()
+
+    state.dry_run = dry_run
+    state.output_dir = output_dir or config.get("output_dir")
+    state.force = force
+
+    if dry_run:
+        log.info("🔍 DRY RUN MODE - No actual downloads will be performed")
 
 
 @app.command()
@@ -75,7 +158,7 @@ def dl_song(
         )
 
     log.info(f"Downloading {media_company} audio...")
-    return music.download_mp3(url, media_company)
+    return music.download_mp3(url, media_company, dry_run=state.dry_run, output_dir=state.output_dir, force=state.force)
 
 
 @app.command()
@@ -94,7 +177,7 @@ def dl_video(
         )
 
     log.info(f"Downloading YouTube video...")
-    return video.download_youtube_video(url)
+    return video.download_youtube_video(url, dry_run=state.dry_run, output_dir=state.output_dir, force=state.force)
 
 
 @app.command()
@@ -105,7 +188,7 @@ def dl_sc_user_likes(
 ) -> None:
     """Download a playlist of SoundCloud user likes and open them in Apple Music"""
     log.info(f"Downloading SoundCloud user likes: {username}...")
-    music.download_soundcloud_user_likes(username)
+    music.download_soundcloud_user_likes(username, dry_run=state.dry_run, output_dir=state.output_dir, force=state.force)
 
 
 @app.command()
@@ -128,6 +211,61 @@ def order_files(
 
     log.info(f"Ordering files in folder '{path_to_folder}' by '{order_by}'...")
     util.sort_files_by(path_to_folder, file_type, order_by)
+
+
+@app.command()
+def config(
+    show: bool = typer.Option(False, "--show", help="Show current configuration"),
+    set_key: Optional[str] = typer.Option(None, "--set", help="Set a configuration key (e.g., output_dir, retry_count, retry_delay)"),
+    value: Optional[str] = typer.Option(None, "--value", help="Value to set for the key"),
+) -> None:
+    """Manage configuration settings"""
+    from cm_util.config_manager import set_config_value
+
+    if show:
+        show_config()
+        return
+
+    if set_key and value is not None:
+        # Handle type conversions
+        if set_key in ["retry_count", "retry_delay"]:
+            try:
+                value = int(value)
+            except ValueError:
+                log.error(f"Invalid value for {set_key}: must be an integer")
+                raise typer.Exit(code=1)
+        elif set_key == "show_progress":
+            value = value.lower() in ["true", "1", "yes", "y"]
+
+        set_config_value(set_key, value)
+        log.info(f"Set {set_key} = {value}")
+        show_config()
+    elif set_key and value is None:
+        log.error("Must provide --value when using --set")
+        raise typer.Exit(code=1)
+    else:
+        show_config()
+
+
+@app.command()
+def history(
+    show: bool = typer.Option(False, "--show", help="Show download history"),
+    clear: bool = typer.Option(False, "--clear", help="Clear download history"),
+    limit: Optional[int] = typer.Option(None, "--limit", "-n", help="Limit number of records to show"),
+) -> None:
+    """View and manage download history"""
+    from cm_util.history_manager import show_history, clear_history
+
+    if clear:
+        if typer.confirm("Are you sure you want to clear all download history?"):
+            clear_history()
+            log.info("Download history cleared")
+        else:
+            log.info("Operation cancelled")
+        return
+
+    if show or not (show or clear):
+        show_history(limit=limit)
 
 
 if __name__ == "__main__":

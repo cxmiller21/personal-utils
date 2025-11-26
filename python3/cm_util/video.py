@@ -43,12 +43,18 @@ def move_video_files_to_downloads(custom_path: str = "") -> None:
         log.warning("No video files found to move")
 
 
-def download_youtube_video(url: str) -> None:
+def download_youtube_video(url: str, dry_run: bool = False, output_dir: str = None, force: bool = False) -> None:
     """Download YouTube video
 
     Args:
         url (str): YouTube video URL
+        dry_run (bool): If True, only show what would be downloaded
+        output_dir (str): Custom output directory
+        force (bool): If True, download even if URL exists in history
     """
-    yt_dlp_download(url, "YouTube", "video")
-    log.info(f"YouTube Videos successfully downloaded")
-    move_video_files_to_downloads()
+    yt_dlp_download(url, "YouTube", "video", dry_run=dry_run, output_dir=output_dir, force=force)
+    if not dry_run:
+        log.info(f"YouTube Videos successfully downloaded")
+        # If custom output is specified, don't move files
+        if not output_dir:
+            move_video_files_to_downloads()

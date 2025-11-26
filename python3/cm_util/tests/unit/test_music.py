@@ -18,7 +18,7 @@ class TestDownloadMp3(unittest.TestCase):
         music.download_mp3(url, media_company)
 
         # Verify yt_dlp_download was called with correct parameters
-        mock_yt_dlp_download.assert_called_once_with(url, media_company, "mp3")
+        mock_yt_dlp_download.assert_called_once_with(url, media_company, "mp3", dry_run=False, output_dir=None, force=False)
 
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
@@ -33,7 +33,7 @@ class TestDownloadMp3(unittest.TestCase):
         music.download_mp3(url, media_company)
 
         # Verify yt_dlp_download was called with correct parameters
-        mock_yt_dlp_download.assert_called_once_with(url, media_company, "mp3")
+        mock_yt_dlp_download.assert_called_once_with(url, media_company, "mp3", dry_run=False, output_dir=None, force=False)
 
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
@@ -64,7 +64,7 @@ class TestDownloadYoutubePlaylist(unittest.TestCase):
         music.download_youtube_playlist(url)
 
         # Verify yt_dlp_download was called with correct parameters
-        mock_yt_dlp_download.assert_called_once_with(url, "YouTube", "mp3")
+        mock_yt_dlp_download.assert_called_once_with(url, "YouTube", "mp3", dry_run=False, output_dir=None, force=False)
 
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
@@ -81,7 +81,7 @@ class TestDownloadSoundcloudUserLikes(unittest.TestCase):
         music.download_soundcloud_user_likes(username)
 
         # Verify yt_dlp_download was called with correct URL
-        mock_yt_dlp_download.assert_called_once_with(expected_url, "SoundCloud", "mp3")
+        mock_yt_dlp_download.assert_called_once_with(expected_url, "SoundCloud", "mp3", dry_run=False, output_dir=None, force=False)
 
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
@@ -98,7 +98,7 @@ class TestDownloadSoundcloudUserLikes(unittest.TestCase):
         music.download_soundcloud_user_likes(username)
 
         # Verify yt_dlp_download was called with correct URL
-        mock_yt_dlp_download.assert_called_once_with(expected_url, "SoundCloud", "mp3")
+        mock_yt_dlp_download.assert_called_once_with(expected_url, "SoundCloud", "mp3", dry_run=False, output_dir=None, force=False)
 
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
