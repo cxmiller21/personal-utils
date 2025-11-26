@@ -7,7 +7,7 @@ authors = ["Cooper <cooperxmiller@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.11"
 typer = "^0.6.0"
-yt-dlp = "^2023.10.7"
+yt-dlp = "^2025.2.19"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.0"

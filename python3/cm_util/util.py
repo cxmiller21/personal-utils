@@ -30,6 +30,8 @@ def get_yt_dl_options(media_type: str) -> dict:
     if media_type not in ["mp3", "video"]:
         raise ValueError("Media type must be either 'mp3' or 'video'")
     if media_type == "mp3":
+        # example cli command
+        # yt-dlp -f bestaudio/best --ignore-errors --out "%(title)s.%(ext)s" --postprocessor-args "-ar 44100 -ac 2" --postprocessor-args "-b:a 192k" --cookies-from-browser chrome 
         return {
             "format": "bestaudio/best",
             "ignoreerrors": True,
@@ -41,6 +43,7 @@ def get_yt_dl_options(media_type: str) -> dict:
                     "preferredquality": "192",
                 }
             ],
+            "cookiesfrombrowser": yt_dlp.parse_options(['--cookies-from-browser', 'chrome']).ydl_opts['cookiesfrombrowser'],
         }
     if media_type == "video":
         return {
