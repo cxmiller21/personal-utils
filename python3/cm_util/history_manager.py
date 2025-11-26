@@ -1,10 +1,10 @@
 """Download history management for cm-util"""
+
 import json
 import logging
-import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
-from datetime import datetime
 
 log = logging.getLogger(__name__)
 

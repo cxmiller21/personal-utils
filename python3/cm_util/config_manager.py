@@ -1,8 +1,10 @@
 """Configuration management for cm-util"""
+
 import logging
-import yaml
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict
+
+import yaml
 
 log = logging.getLogger(__name__)
 

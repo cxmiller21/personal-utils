@@ -1,14 +1,13 @@
 import logging
 
-from .util import (
-  yt_dlp_download,
-  move_mp3_files_to_music_folder
-)
+from .util import move_mp3_files_to_music_folder, yt_dlp_download
 
 log = logging.getLogger(__name__)
 
 
-def download_mp3(url: str, media_company: str, dry_run: bool = False, output_dir: str = None, force: bool = False) -> None:
+def download_mp3(
+    url: str, media_company: str, dry_run: bool = False, output_dir: str = None, force: bool = False
+) -> None:
     """Download MP3 from URL
 
     Args:
@@ -23,7 +22,9 @@ def download_mp3(url: str, media_company: str, dry_run: bool = False, output_dir
         move_mp3_files_to_music_folder()
 
 
-def download_youtube_playlist(url: str, dry_run: bool = False, output_dir: str = None, force: bool = False) -> None:
+def download_youtube_playlist(
+    url: str, dry_run: bool = False, output_dir: str = None, force: bool = False
+) -> None:
     """Download YouTube playlist as MP3s
 
     Args:
@@ -37,7 +38,9 @@ def download_youtube_playlist(url: str, dry_run: bool = False, output_dir: str =
         move_mp3_files_to_music_folder()
 
 
-def download_soundcloud_user_likes(username: str, dry_run: bool = False, output_dir: str = None, force: bool = False) -> None:
+def download_soundcloud_user_likes(
+    username: str, dry_run: bool = False, output_dir: str = None, force: bool = False
+) -> None:
     """Download SoundCloud user likes as MP3s
 
     Args:

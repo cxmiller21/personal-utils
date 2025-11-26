@@ -1,7 +1,7 @@
 import logging
-
 from pathlib import Path
-from .util import yt_dlp_download, sort_files_by
+
+from .util import sort_files_by, yt_dlp_download
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +43,9 @@ def move_video_files_to_downloads(custom_path: str = "") -> None:
         log.warning("No video files found to move")
 
 
-def download_youtube_video(url: str, dry_run: bool = False, output_dir: str = None, force: bool = False) -> None:
+def download_youtube_video(
+    url: str, dry_run: bool = False, output_dir: str = None, force: bool = False
+) -> None:
     """Download YouTube video
 
     Args:

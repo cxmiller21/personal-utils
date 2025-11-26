@@ -1,10 +1,10 @@
 import logging
 import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, call, patch
 
 from cm_util import util
-from pathlib import Path
-from unittest.mock import patch, call, Mock, MagicMock
 
 log = logging.getLogger(__name__)
 
@@ -12,11 +12,11 @@ log = logging.getLogger(__name__)
 class TestGetItunesMusicFolder(unittest.TestCase):
     def test_get_itunes_music_folder(self):
         dev_user = util.get_comp_user_name()
-        expected_path = f"/Users/{dev_user}/Music/Music/Media.localized/Automatically Add to Music.localized"
-        result = util.get_itunes_music_folder()
-        self.assertEqual(
-            result, expected_path, "Returned path should match the expected path"
+        expected_path = (
+            f"/Users/{dev_user}/Music/Music/Media.localized/Automatically Add to Music.localized"
         )
+        result = util.get_itunes_music_folder()
+        self.assertEqual(result, expected_path, "Returned path should match the expected path")
 
 
 class TestGetYtDLOptions(unittest.TestCase):
@@ -36,7 +36,9 @@ class TestGetYtDLOptions(unittest.TestCase):
         self.assertEqual(options["postprocessors"][0]["preferredquality"], "192")
 
         # Test cookiesfrombrowser exists
-        self.assertIn("cookiesfrombrowser", options, "cookiesfrombrowser should be present for MP3 downloads")
+        self.assertIn(
+            "cookiesfrombrowser", options, "cookiesfrombrowser should be present for MP3 downloads"
+        )
 
     def test_get_video_options(self):
         media_type = "video"
@@ -60,7 +62,11 @@ class TestGetYtDLOptions(unittest.TestCase):
 
 
 class TestGetJsonConfig(unittest.TestCase):
-    @patch("builtins.open", new_callable=unittest.mock.mock_open, read_data='{"installed": {"path": "/Applications", "apps": ["App1"]}, "system": {"path": "/System/Applications", "apps": ["App2"]}}')
+    @patch(
+        "builtins.open",
+        new_callable=unittest.mock.mock_open,
+        read_data='{"installed": {"path": "/Applications", "apps": ["App1"]}, "system": {"path": "/System/Applications", "apps": ["App2"]}}',
+    )
     def test_get_app_config_data(self, mock_file):
         app_data = util.get_json_config("my-apps")
         assert type(app_data) == dict
@@ -175,9 +181,7 @@ class TestSortFilesBy(unittest.TestCase):
 
     def test_sort_by_date_all_files(self):
         sorted_files = util.sort_files_by(self.temp_dir_path, "all", "date")
-        self.assertEqual(
-            sorted_files, sorted(sorted_files, key=lambda f: f.stat().st_ctime)
-        )
+        self.assertEqual(sorted_files, sorted(sorted_files, key=lambda f: f.stat().st_ctime))
 
     def test_sort_by_name_mp3_files(self):
         sorted_files = util.sort_files_by(self.temp_dir_path, "mp3", "name")
@@ -192,9 +196,7 @@ class TestSortFilesBy(unittest.TestCase):
 
     def test_sort_by_date_mp3_files(self):
         sorted_files = util.sort_files_by(self.temp_dir_path, "mp3", "date")
-        self.assertEqual(
-            sorted_files, sorted(sorted_files, key=lambda f: f.stat().st_ctime)
-        )
+        self.assertEqual(sorted_files, sorted(sorted_files, key=lambda f: f.stat().st_ctime))
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -209,7 +211,14 @@ class TestYtDlpDownload(unittest.TestCase):
     @patch("cm_util.history_manager.is_downloaded")
     @patch("cm_util.util.get_yt_dl_options")
     @patch("yt_dlp.YoutubeDL")
-    def test_download_mp3(self, mock_YoutubeDL, mock_get_options, mock_is_downloaded, mock_add_to_history, mock_tag_mp3):
+    def test_download_mp3(
+        self,
+        mock_YoutubeDL,
+        mock_get_options,
+        mock_is_downloaded,
+        mock_add_to_history,
+        mock_tag_mp3,
+    ):
         # Mock the options to avoid yt_dlp.parse_options issues
         mock_get_options.return_value = {
             "format": "bestaudio/best",
@@ -280,7 +289,9 @@ class TestYtDlpDownload(unittest.TestCase):
     @patch("cm_util.history_manager.is_downloaded")
     @patch("cm_util.util.get_yt_dl_options")
     @patch("yt_dlp.YoutubeDL")
-    def test_download_non_zero_error_code(self, mock_YoutubeDL, mock_get_options, mock_is_downloaded):
+    def test_download_non_zero_error_code(
+        self, mock_YoutubeDL, mock_get_options, mock_is_downloaded
+    ):
         """Test that extraction failures from yt-dlp are handled correctly"""
         # Mock history check
         mock_is_downloaded.return_value = False

@@ -225,6 +225,28 @@ cm-util order-files --path ~/Downloads --file-type mp3 --order-by date
 
 ## Development
 
+### Linting and Code Quality
+
+Run linting checks locally (same as GitHub Actions CI):
+
+```bash
+cd python3
+
+# Check all linting (recommended before committing)
+./lint.sh
+
+# Auto-fix formatting issues
+./lint-fix.sh
+
+# Or run individual checks:
+poetry run black --check .          # Check formatting
+poetry run black .                  # Auto-fix formatting
+poetry run isort --check-only .     # Check import sorting
+poetry run isort .                  # Auto-fix import sorting
+poetry run flake8 cm_util/ --max-line-length=100 --extend-ignore=E203,W503
+poetry run mypy cm_util/ --ignore-missing-imports
+```
+
 ### Project Structure
 
 ```md

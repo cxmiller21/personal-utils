@@ -1,4 +1,5 @@
 import unittest
+
 from cm_util.main import validate_url
 
 

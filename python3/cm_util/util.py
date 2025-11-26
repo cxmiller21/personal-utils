@@ -1,11 +1,11 @@
-import logging
 import json
+import logging
 import subprocess
 import time
-import yt_dlp
-
 from pathlib import Path
-from typing import Any, Optional, Dict
+from typing import Any, Dict, Optional
+
+import yt_dlp
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
 
@@ -67,7 +67,9 @@ def get_yt_dl_options(media_type: str, show_progress: bool = True) -> dict:
 
         # Try to add Chrome cookies, but don't fail if Chrome is not available
         try:
-            cookies = yt_dlp.parse_options(['--cookies-from-browser', 'chrome']).ydl_opts['cookiesfrombrowser']
+            cookies = yt_dlp.parse_options(["--cookies-from-browser", "chrome"]).ydl_opts[
+                "cookiesfrombrowser"
+            ]
             options["cookiesfrombrowser"] = cookies
         except Exception as e:
             log.warning(f"Could not load Chrome cookies (Chrome may not be installed): {str(e)}")
@@ -133,10 +135,7 @@ def open_app(dir: str, app: str) -> int:
     log.info(f"Dir: {dir} - Opening {app}...")
     try:
         result = subprocess.run(
-            ["open", f"{dir}/{app}.app"],
-            check=True,
-            capture_output=True,
-            text=True
+            ["open", f"{dir}/{app}.app"], check=True, capture_output=True, text=True
         )
         return result.returncode
     except subprocess.CalledProcessError as e:
@@ -207,16 +206,16 @@ def tag_mp3_file(file_path: Path, metadata: Dict[str, Any]) -> None:
             audio = EasyID3(file_path)
 
         # Add available metadata
-        if metadata.get('title'):
-            audio['title'] = metadata['title']
-        if metadata.get('artist') or metadata.get('uploader'):
-            audio['artist'] = metadata.get('artist') or metadata.get('uploader')
-        if metadata.get('album'):
-            audio['album'] = metadata['album']
-        if metadata.get('upload_date'):
+        if metadata.get("title"):
+            audio["title"] = metadata["title"]
+        if metadata.get("artist") or metadata.get("uploader"):
+            audio["artist"] = metadata.get("artist") or metadata.get("uploader")
+        if metadata.get("album"):
+            audio["album"] = metadata["album"]
+        if metadata.get("upload_date"):
             # Convert YYYYMMDD to YYYY
-            date = metadata['upload_date']
-            audio['date'] = date[:4] if len(date) >= 4 else date
+            date = metadata["upload_date"]
+            audio["date"] = date[:4] if len(date) >= 4 else date
 
         audio.save()
         log.debug(f"Tagged MP3 file: {file_path.name}")
@@ -241,7 +240,16 @@ def clean_url(url: str, media_company: str) -> str:
     return url
 
 
-def yt_dlp_download(url: str, media_company: str, media_type: str, max_retries: int = 3, retry_delay: int = 2, dry_run: bool = False, output_dir: str = None, force: bool = False) -> None:
+def yt_dlp_download(
+    url: str,
+    media_company: str,
+    media_type: str,
+    max_retries: int = 3,
+    retry_delay: int = 2,
+    dry_run: bool = False,
+    output_dir: str = None,
+    force: bool = False,
+) -> None:
     """YouTube DL download with retry logic
 
     Args:
@@ -257,7 +265,7 @@ def yt_dlp_download(url: str, media_company: str, media_type: str, max_retries: 
     Raises:
         Exception: If download fails after all retries
     """
-    from .history_manager import is_downloaded, get_download_info, add_to_history
+    from .history_manager import add_to_history, get_download_info, is_downloaded
 
     cleaned_url = clean_url(url, media_company)
 
@@ -295,7 +303,7 @@ def yt_dlp_download(url: str, media_company: str, media_type: str, max_retries: 
                 # Extract info to get title and metadata before downloading
                 info = ydl.extract_info(cleaned_url, download=True)
                 if info:
-                    downloaded_title = info.get('title', 'Unknown')
+                    downloaded_title = info.get("title", "Unknown")
                     metadata = info
                     # Build the expected file path
                     if output_dir:
@@ -323,14 +331,16 @@ def yt_dlp_download(url: str, media_company: str, media_type: str, max_retries: 
                 url=url,
                 title=downloaded_title or "Unknown",
                 media_type=media_type,
-                file_path=downloaded_path
+                file_path=downloaded_path,
             )
 
             return  # Success - exit function
         except Exception as e:
             last_exception = e
             if attempt < max_retries - 1:
-                log.warning(f"Download attempt {attempt + 1} failed: {str(e)}. Retrying in {retry_delay}s...")
+                log.warning(
+                    f"Download attempt {attempt + 1} failed: {str(e)}. Retrying in {retry_delay}s..."
+                )
                 time.sleep(retry_delay)
             else:
                 log.error(f"Unable to download url: {url} after {max_retries} attempts - {str(e)}")
@@ -348,9 +358,7 @@ def move_mp3_files_to_music_folder(custom_path: str = "") -> None:
     Raises:
         ValueError: Music folder path does not exist
     """
-    music_folder_path = (
-        Path(get_itunes_music_folder()) if not custom_path else Path(custom_path)
-    )
+    music_folder_path = Path(get_itunes_music_folder()) if not custom_path else Path(custom_path)
     if not music_folder_path.exists():
         raise ValueError(f"Path {music_folder_path} does not exist")
 
