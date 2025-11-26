@@ -24,8 +24,8 @@ A collection of CLI commands that I use to help automate common tasks like downl
 # Using the official installer
 curl -sSL https://install.python-poetry.org | python3 -
 
-# Or using pipx
-pipx install poetry
+# Or using homebrew (macOS)
+brew install poetry
 
 # Verify installation
 poetry --version
@@ -65,7 +65,7 @@ brew install pipx
 pipx ensurepath
 
 # Install cm-util globally
-cd /Users/coopermiller/Development/GitHub/personal-utils/python3
+cd ./python3
 pipx install .
 
 # Now you can run from anywhere
@@ -74,7 +74,7 @@ cm-util dl-song --url "https://youtube.com/..."
 
 To update after making changes:
 ```bash
-cd /Users/coopermiller/Development/GitHub/personal-utils/python3
+cd ./python3
 pipx reinstall cm-util
 ```
 
@@ -84,7 +84,7 @@ Add the Poetry virtualenv's bin directory to your shell PATH:
 
 ```bash
 # Find your virtualenv path
-cd /Users/coopermiller/Development/GitHub/personal-utils/python3
+cd ./python3
 poetry env info --path
 
 # Add to your ~/.zshrc or ~/.bashrc:
@@ -103,7 +103,7 @@ Add an alias to your shell config (`~/.zshrc` or `~/.bashrc`):
 
 ```bash
 # Add this line to ~/.zshrc
-alias cm-util='poetry -C /Users/coopermiller/Development/GitHub/personal-utils/python3 run cm-util'
+alias cm-util='poetry -C ./python3 run cm-util'
 
 # Reload your shell
 source ~/.zshrc
