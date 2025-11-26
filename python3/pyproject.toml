@@ -1,27 +1,24 @@
 [tool.poetry]
 name = "cm-util"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 authors = ["Cooper <cooperxmiller@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-typer = "^0.6.0"
+python = "^3.13"
+typer = "^0.15.0"
 yt-dlp = "^2025.2.19"
-pyyaml = "^6.0"
+pyyaml = "^6.0.2"
 mutagen = "^1.47.0"
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.4.0"
-
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.2"
-coverage = "^7.3.2"
-pre-commit = "^3.6.0"
-black = "^23.12.1"
+pytest = "^8.0.0"
+coverage = "^7.0.0"
+pre-commit = "^3.0.0"
+black = ">=24.0.0"
 flake8 = "^7.0.0"
-isort = "^5.13.2"
-mypy = "^1.8.0"
+isort = "^5.13.0"
+mypy = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -51,13 +48,13 @@ log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
 [tool.black]
 line-length = 100
-target-version = ['py311']
+target-version = ['py313']
 
 [tool.isort]
 profile = "black"
 line_length = 100
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.13"
 ignore_missing_imports = true
 no_strict_optional = true

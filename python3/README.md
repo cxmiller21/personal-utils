@@ -16,8 +16,9 @@
 # https://python-poetry.org/docs/
 curl -sSL https://install.python-poetry.org | python3 -
 
-# Or with pipx
-pipx install poetry
+# Or with homebrew (macOS)
+brew install poetry
+
 poetry version
 ```
 

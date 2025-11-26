@@ -94,7 +94,7 @@ class TestCleanUrl(unittest.TestCase):
         self.assertEqual(result, url, "Non-YouTube URL should not be modified")
 
     def test_clean_url_youtube_with_backslashes(self):
-        url = "https://www.youtube.com/watch\?v\=xyz"
+        url = r"https://www.youtube.com/watch\?v\=xyz"
         media_company = "youtube"
         result = util.clean_url(url, media_company)
         self.assertEqual(
