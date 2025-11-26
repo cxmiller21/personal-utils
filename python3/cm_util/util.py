@@ -233,9 +233,9 @@ def clean_url(url: str, media_company: str) -> str:
         return url
 
     # If YouTube URL
-    if r"watch\?v\=" in url:
+    if "watch\\?v\\=" in url:
         # Handle copy/paste from YouTube to terminal where backslashes are added
-        return url.replace(r"watch\?v\=", "watch?v=")
+        return url.replace("watch\\?v\\=", "watch?v=")
     return url
 
 

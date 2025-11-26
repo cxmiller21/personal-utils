@@ -121,18 +121,13 @@ def validate_url(url: str) -> tuple[bool, str | None]:
     Returns:
         tuple[bool, str | None]: (is_valid, media_company)
     """
-    # YouTube URL patterns
-    youtube_patterns = [
-        r"^https?://(www\.)?youtube\.com/watch\?v=[\w-]+",
-        r"^https?://(www\.)?youtube\.com/playlist\?list=[\w-]+",
-        r"^https?://youtu\.be/[\w-]+",
-    ]
+    # YouTube URL pattern
+    youtube_pattern = r"^https?://(www\.)?youtube\.com/.+"
 
     # SoundCloud URL pattern
     soundcloud_pattern = r"^https?://(www\.)?soundcloud\.com/.+"
 
-    for pattern in youtube_patterns:
-        if re.match(pattern, url):
+    if re.match(youtube_pattern, url):
             return True, "YouTube"
 
     if re.match(soundcloud_pattern, url):
