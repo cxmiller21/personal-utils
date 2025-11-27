@@ -243,8 +243,8 @@ poetry run black --check .          # Check formatting
 poetry run black .                  # Auto-fix formatting
 poetry run isort --check-only .     # Check import sorting
 poetry run isort .                  # Auto-fix import sorting
-poetry run flake8 cm_util/ --max-line-length=100 --extend-ignore=E203,W503
-poetry run mypy cm_util/ --ignore-missing-imports
+poetry run flake8 cm_util/
+poetry run mypy cm_util/
 ```
 
 ### Project Structure

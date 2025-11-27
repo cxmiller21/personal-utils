@@ -26,6 +26,4 @@ def run_coverage():
         check=True,
         timeout=60,
     )
-    subprocess.run(
-        ["python", "-m", "coverage", "html"], cwd=script_dir, check=True, timeout=60
-    )
+    subprocess.run(["python", "-m", "coverage", "html"], cwd=script_dir, check=True, timeout=60)

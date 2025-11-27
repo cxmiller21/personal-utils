@@ -46,13 +46,6 @@ jobs:
         poetry run coverage report -m
         poetry run coverage xml
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./python3/coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-
   lint:
     runs-on: macos-latest
 
