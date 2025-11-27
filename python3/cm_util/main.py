@@ -103,15 +103,15 @@ def main(
 @app.command()
 def open_apps(type: str = typer.Option("default", "--type", "-t", prompt="Open my apps")) -> None:
     """Start up basic applications"""
-    log.info(f"Welcome! Starting up Applications...")
+    log.info("Welcome! Starting up Applications...")
     match type:
         case "default":
-            log.info(f"Opening System Applications...")
+            log.info("Opening System Applications...")
             util.open_apps("installed")
-            log.info(f"Opening Installed Applications...")
+            log.info("Opening Installed Applications...")
             util.open_apps("system")
         case "music":
-            log.info(f"Opening Music Applications...")
+            log.info("Opening Music Applications...")
             util.open_apps("music")
 
 
@@ -170,7 +170,7 @@ def dl_video(
         log.error(f"URL: {url} is not a valid YouTube URL")
         raise ValueError("Invalid URL. Expected format: https://youtube.com/watch?v=...")
 
-    log.info(f"Downloading YouTube video...")
+    log.info("Downloading YouTube video...")
     log.info(f"State: dry_run={state.dry_run}, output_dir={state.output_dir}, force={state.force}")
     return video.download_youtube_video(
         url, dry_run=state.dry_run, output_dir=state.output_dir, force=state.force
@@ -229,16 +229,19 @@ def config(
 
     if set_key and value is not None:
         # Handle type conversions
+        converted_value: int | bool | str
         if set_key in ["retry_count", "retry_delay"]:
             try:
-                value = int(value)
+                converted_value = int(value)
             except ValueError:
                 log.error(f"Invalid value for {set_key}: must be an integer")
                 raise typer.Exit(code=1)
         elif set_key == "show_progress":
-            value = value.lower() in ["true", "1", "yes", "y"]
+            converted_value = value.lower() in ["true", "1", "yes", "y"]
+        else:
+            converted_value = value
 
-        set_config_value(set_key, value)
+        set_config_value(set_key, converted_value)
         log.info(f"Set {set_key} = {value}")
         show_config()
     elif set_key and value is None:

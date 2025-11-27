@@ -163,7 +163,7 @@ open cm_util/htmlcov/index.html
 - Music downloads (YouTube, SoundCloud)
 - Video downloads with file management
 - URL validation
-- Retry logic and error handling
+- Retry logic and error handling``
 - File operations
 
 ## Available Commands

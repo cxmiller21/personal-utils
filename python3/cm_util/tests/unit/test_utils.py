@@ -2,7 +2,7 @@ import logging
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, Mock, call, patch
+from unittest.mock import MagicMock, call, patch
 
 from cm_util import util
 
@@ -65,17 +65,20 @@ class TestGetJsonConfig(unittest.TestCase):
     @patch(
         "builtins.open",
         new_callable=unittest.mock.mock_open,
-        read_data='{"installed": {"path": "/Applications", "apps": ["App1"]}, "system": {"path": "/System/Applications", "apps": ["App2"]}}',
+        read_data=(
+            '{"installed": {"path": "/Applications", "apps": ["App1"]}, '
+            '"system": {"path": "/System/Applications", "apps": ["App2"]}}'
+        ),
     )
     def test_get_app_config_data(self, mock_file):
         app_data = util.get_json_config("my-apps")
-        assert type(app_data) == dict
+        assert isinstance(app_data, dict)
 
         assert app_data["installed"]["path"] == "/Applications"
         assert app_data["system"]["path"] == "/System/Applications"
 
-        assert type(app_data["installed"]["apps"]) == list
-        assert type(app_data["system"]["apps"]) == list
+        assert isinstance(app_data["installed"]["apps"], list)
+        assert isinstance(app_data["system"]["apps"], list)
 
 
 class TestYtDlProgressHook(unittest.TestCase):

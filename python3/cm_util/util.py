@@ -3,7 +3,7 @@ import logging
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import yt_dlp
 from mutagen.easyid3 import EasyID3
@@ -47,7 +47,9 @@ def get_yt_dl_options(media_type: str, show_progress: bool = True) -> dict:
 
     if media_type == "mp3":
         # example cli command
-        # yt-dlp -f bestaudio/best --ignore-errors --out "%(title)s.%(ext)s" --postprocessor-args "-ar 44100 -ac 2" --postprocessor-args "-b:a 192k" --cookies-from-browser chrome
+        # yt-dlp -f bestaudio/best --ignore-errors --out "%(title)s.%(ext)s"
+        # --postprocessor-args "-ar 44100 -ac 2" --postprocessor-args "-b:a 192k"
+        # --cookies-from-browser chrome
         options = {
             "format": "bestaudio/best",
             "ignoreerrors": True,
@@ -77,20 +79,20 @@ def get_yt_dl_options(media_type: str, show_progress: bool = True) -> dict:
 
         return options
 
-    if media_type == "video":
-        options = {
-            "format": "best*",
-            "format_sort": ["vcodec:h264", "res", "acodec:m4a"],
-            "ignoreerrors": False,
-            "outtmpl": "%(title)s.%(ext)s",
-            "merge_output_format": "mp4",
-        }
+    # media_type == "video"
+    options = {
+        "format": "best*",
+        "format_sort": ["vcodec:h264", "res", "acodec:m4a"],
+        "ignoreerrors": False,
+        "outtmpl": "%(title)s.%(ext)s",
+        "merge_output_format": "mp4",
+    }
 
-        # Add progress hook if enabled
-        if show_progress:
-            options["progress_hooks"] = [yt_dl_progress_hook]
+    # Add progress hook if enabled
+    if show_progress:
+        options["progress_hooks"] = [yt_dl_progress_hook]
 
-        return options
+    return options
 
 
 def yt_dl_progress_hook(d: dict[str, Any]) -> None:
@@ -274,7 +276,7 @@ def yt_dlp_download(
         info = get_download_info(url)
         log.info(f"⏭️  Skipping - already downloaded: {info.get('title', url)}")
         log.info(f"   Downloaded on: {info.get('timestamp', 'unknown')}")
-        log.info(f"   Use --force to download anyway")
+        log.info("   Use --force to download anyway")
         return
 
     if dry_run:
@@ -339,7 +341,8 @@ def yt_dlp_download(
             last_exception = e
             if attempt < max_retries - 1:
                 log.warning(
-                    f"Download attempt {attempt + 1} failed: {str(e)}. Retrying in {retry_delay}s..."
+                    f"Download attempt {attempt + 1} failed: {str(e)}.\n"
+                    f"Retrying in {retry_delay}s..."
                 )
                 time.sleep(retry_delay)
             else:

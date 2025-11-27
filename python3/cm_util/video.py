@@ -56,7 +56,7 @@ def download_youtube_video(
     """
     yt_dlp_download(url, "YouTube", "video", dry_run=dry_run, output_dir=output_dir, force=force)
     if not dry_run:
-        log.info(f"YouTube Videos successfully downloaded")
+        log.info("YouTube Videos successfully downloaded")
         # If custom output is specified, don't move files
         if not output_dir:
             move_video_files_to_downloads()
