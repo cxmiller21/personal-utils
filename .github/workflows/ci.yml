@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Configure Poetry
+      run: |
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
+      with:
+        path: python3/.venv
+        key: venv-${{ runner.os }}-${{ hashFiles('python3/poetry.lock') }}
+
+    - name: Install dependencies
+      working-directory: ./python3
+      run: poetry install --no-interaction
+
+    - name: Run tests with coverage
+      working-directory: ./python3
+      run: |
+        poetry run coverage run -m pytest cm_util/tests/
+        poetry run coverage report -m
+        poetry run coverage xml
+
+  lint:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      working-directory: ./python3
+      run: poetry install --no-interaction
+
+    - name: Run Black
+      working-directory: ./python3
+      run: poetry run black --check .
+
+    - name: Run isort
+      working-directory: ./python3
+      run: poetry run isort --check-only .
+
+    - name: Run Flake8
+      working-directory: ./python3
+      run: poetry run flake8 cm_util/
+
+    - name: Run mypy
+      working-directory: ./python3
+      run: poetry run mypy cm_util/ --ignore-missing-imports
