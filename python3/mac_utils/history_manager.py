@@ -1,4 +1,4 @@
-"""Download history management for cm-util"""
+"""Download history management for mac-utils"""
 
 import json
 import logging
@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 
 log = logging.getLogger(__name__)
 
-DEFAULT_HISTORY_DIR = Path.home() / ".cm-util"
+DEFAULT_HISTORY_DIR = Path.home() / ".mac-utils"
 DEFAULT_HISTORY_FILE = DEFAULT_HISTORY_DIR / "history.json"
 
 

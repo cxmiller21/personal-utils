@@ -32,15 +32,25 @@ poetry install
 poetry run python mac_utils/main.py --help
 
 # Call CLI tool with Poetry
-poetry run cm-util --help
+poetry run mac-utils --help
 
-# Create project in editable mode (call from terminal as cm-util)
+# Create project in editable mode (call from terminal as mac-utils)
 pip install -e .
 ```
+
+## Testing
+
+All commands must be run from the `python3` directory.
 
 ### Run Tests
 
 ```shell
+# Navigate to python3 directory first
+cd python3
+
+# Install dependencies (required before first run)
+poetry install
+
 # Run all unit tests (46 tests)
 poetry run test
 
@@ -57,7 +67,7 @@ poetry run pytest mac_utils/tests/ -v
 ### Run Coverage
 
 ```shell
-# Generate coverage report
+# Generate coverage report (from python3 directory)
 poetry run coverage
 
 # View coverage in terminal
@@ -74,33 +84,33 @@ Test scripts are defined in `scripts.py`.
 ### Download Song (YouTube/SoundCloud)
 
 ```shell
-poetry run cm-util dl-song --url "https://youtube.com/watch?v=..."
-poetry run cm-util dl-song --url "https://soundcloud.com/artist/track"
+poetry run mac-utils dl-song --url "https://youtube.com/watch?v=..."
+poetry run mac-utils dl-song --url "https://soundcloud.com/artist/track"
 ```
 
 ### Download Video (YouTube)
 
 ```shell
-poetry run cm-util dl-video --url "https://youtube.com/watch?v=..."
+poetry run mac-utils dl-video --url "https://youtube.com/watch?v=..."
 ```
 
 ### Download SoundCloud User Likes
 
 ```shell
-poetry run cm-util dl-sc-user-likes --username "username"
+poetry run mac-utils dl-sc-user-likes --username "username"
 ```
 
 ### Open Applications
 
 ```shell
-poetry run cm-util open-apps --type default
-poetry run cm-util open-apps --type music
+poetry run mac-utils open-apps --type default
+poetry run mac-utils open-apps --type music
 ```
 
 ### Sort Files
 
 ```shell
-poetry run cm-util order-files --path "/path/to/folder" --file-type mp3 --order-by date
+poetry run mac-utils order-files --path "/path/to/folder" --file-type mp3 --order-by date
 ```
 
 ## Disclaimer

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cm-util"
+name = "mac-utils"
 version = "1.0.0"
 description = ""
 authors = ["Cooper <cooperxmiller@gmail.com>"]

@@ -1,4 +1,4 @@
-"""Configuration management for cm-util"""
+"""Configuration management for mac-utils"""
 
 import logging
 from pathlib import Path
@@ -8,7 +8,7 @@ import yaml
 
 log = logging.getLogger(__name__)
 
-DEFAULT_CONFIG_DIR = Path.home() / ".cm-util"
+DEFAULT_CONFIG_DIR = Path.home() / ".mac-utils"
 DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR / "config.yaml"
 
 DEFAULT_CONFIG = {
