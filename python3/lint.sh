@@ -22,7 +22,7 @@ fi
 
 echo ""
 echo "=== Running Flake8 (linting) ==="
-poetry run flake8 cm_util/ --max-line-length=100 --extend-ignore=E203,W503
+poetry run flake8 mac_utils/ --max-line-length=100 --extend-ignore=E203,W503
 if [ $? -eq 0 ]; then
     echo "✅ Flake8 passed"
 else
@@ -32,7 +32,7 @@ fi
 
 echo ""
 echo "=== Running mypy (type checking) ==="
-poetry run mypy cm_util/ --ignore-missing-imports
+poetry run mypy mac_utils/ --ignore-missing-imports
 if [ $? -eq 0 ]; then
     echo "✅ mypy passed"
 else

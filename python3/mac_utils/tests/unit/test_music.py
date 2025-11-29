@@ -8,8 +8,8 @@ log = logging.getLogger(__name__)
 
 
 class TestDownloadMp3(unittest.TestCase):
-    @patch("cm_util.music.move_mp3_files_to_music_folder")
-    @patch("cm_util.music.yt_dlp_download")
+    @patch("mac_utils.music.move_mp3_files_to_music_folder")
+    @patch("mac_utils.music.yt_dlp_download")
     def test_download_mp3_youtube(self, mock_yt_dlp_download, mock_move_files):
         """Test downloading MP3 from YouTube"""
         url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
@@ -25,8 +25,8 @@ class TestDownloadMp3(unittest.TestCase):
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
 
-    @patch("cm_util.music.move_mp3_files_to_music_folder")
-    @patch("cm_util.music.yt_dlp_download")
+    @patch("mac_utils.music.move_mp3_files_to_music_folder")
+    @patch("mac_utils.music.yt_dlp_download")
     def test_download_mp3_soundcloud(self, mock_yt_dlp_download, mock_move_files):
         """Test downloading MP3 from SoundCloud"""
         url = "https://soundcloud.com/artist/track"
@@ -42,8 +42,8 @@ class TestDownloadMp3(unittest.TestCase):
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
 
-    @patch("cm_util.music.move_mp3_files_to_music_folder")
-    @patch("cm_util.music.yt_dlp_download")
+    @patch("mac_utils.music.move_mp3_files_to_music_folder")
+    @patch("mac_utils.music.yt_dlp_download")
     def test_download_mp3_download_fails(self, mock_yt_dlp_download, mock_move_files):
         """Test that download failure propagates exception"""
         url = "https://www.youtube.com/watch?v=invalid"
@@ -59,8 +59,8 @@ class TestDownloadMp3(unittest.TestCase):
 
 
 class TestDownloadYoutubePlaylist(unittest.TestCase):
-    @patch("cm_util.music.move_mp3_files_to_music_folder")
-    @patch("cm_util.music.yt_dlp_download")
+    @patch("mac_utils.music.move_mp3_files_to_music_folder")
+    @patch("mac_utils.music.yt_dlp_download")
     def test_download_youtube_playlist(self, mock_yt_dlp_download, mock_move_files):
         """Test downloading YouTube playlist"""
         url = "https://www.youtube.com/playlist?list=PLtest123"
@@ -77,8 +77,8 @@ class TestDownloadYoutubePlaylist(unittest.TestCase):
 
 
 class TestDownloadSoundcloudUserLikes(unittest.TestCase):
-    @patch("cm_util.music.move_mp3_files_to_music_folder")
-    @patch("cm_util.music.yt_dlp_download")
+    @patch("mac_utils.music.move_mp3_files_to_music_folder")
+    @patch("mac_utils.music.yt_dlp_download")
     def test_download_soundcloud_user_likes(self, mock_yt_dlp_download, mock_move_files):
         """Test downloading SoundCloud user likes"""
         username = "test_user"
@@ -94,8 +94,8 @@ class TestDownloadSoundcloudUserLikes(unittest.TestCase):
         # Verify files were moved to Music folder
         mock_move_files.assert_called_once()
 
-    @patch("cm_util.music.move_mp3_files_to_music_folder")
-    @patch("cm_util.music.yt_dlp_download")
+    @patch("mac_utils.music.move_mp3_files_to_music_folder")
+    @patch("mac_utils.music.yt_dlp_download")
     def test_download_soundcloud_user_likes_with_special_chars(
         self, mock_yt_dlp_download, mock_move_files
     ):

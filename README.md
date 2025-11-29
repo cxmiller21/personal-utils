@@ -11,6 +11,7 @@ A collection of macOS CLI utilities to automate common tasks like downloading me
 - Apple Music integration via macOS-specific directories
 
 **Prerequisites:**
+
 - macOS (tested on Ventura and later)
 - Python 3.13+
 - Poetry (Python package manager)
@@ -55,13 +56,14 @@ poetry run mac-utils dl-video "https://youtube.com/watch?v=..."
 
 Choose one of these options to use `mac-utils` from any terminal without being in the project directory:
 
-| Method | Best For | Updates After Code Changes | Setup Complexity |
-|--------|----------|---------------------------|------------------|
-| **pipx** | Production use | Need to run `pipx reinstall` | Easy |
-| **Shell Alias** (Poetry) | Development | Automatic ✨ | Very Easy |
-| **PATH Export** | Power users | Automatic | Medium |
+| Method                   | Best For       | Updates After Code Changes   | Setup Complexity |
+| ------------------------ | -------------- | ---------------------------- | ---------------- |
+| **pipx**                 | Production use | Need to run `pipx reinstall` | Easy             |
+| **Shell Alias** (Poetry) | Development    | Automatic ✨                 | Very Easy        |
+| **PATH Export**          | Power users    | Automatic                    | Medium           |
 
 **Quick Recommendation:**
+
 - **Developing?** Use Option 2 (Shell Alias with Poetry)
 - **Just using the tool?** Use Option 1 (pipx)
 
@@ -89,6 +91,7 @@ mac-utils --version
 ```
 
 **After making code changes:**
+
 ```bash
 cd ./personal-utils/python3
 pipx reinstall mac-utils
@@ -133,6 +136,7 @@ source ~/.bashrc
 ```
 
 **Now you can run from anywhere:**
+
 ```bash
 cd ~
 mac-utils dl-song "https://youtube.com/watch?v=..."
@@ -140,6 +144,7 @@ mac-utils --help
 ```
 
 **Benefits:**
+
 - No reinstall needed after code changes
 - Always uses latest code from your repo
 - Perfect for active development
@@ -212,6 +217,7 @@ source ~/.bashrc
 ```
 
 **Now you can use super short commands:**
+
 ```bash
 # Download a song with just 5 characters!
 mudls "https://youtube.com/watch?v=dQw4w9WgXcQ"
@@ -231,6 +237,7 @@ muhistory --show --limit 10
 
 **Customize your own aliases:**
 Feel free to create your own short aliases! Common patterns:
+
 - `mu` = mac-utils (prefix)
 - `dls` = download song
 - `dlv` = download video
@@ -262,13 +269,13 @@ cd python3
 poetry run test
 
 # Run tests with pytest directly
-poetry run pytest cm_util/tests/
+poetry run pytest mac_utils/tests/
 
 # Run specific test file
-poetry run pytest cm_util/tests/unit/test_music.py
+poetry run pytest mac_utils/tests/unit/test_music.py
 
 # Run with verbose output
-poetry run pytest cm_util/tests/ -v
+poetry run pytest mac_utils/tests/ -v
 ```
 
 ### Run Coverage
@@ -280,12 +287,13 @@ cd python3
 poetry run coverage
 
 # View HTML coverage report
-open cm_util/htmlcov/index.html
+open mac_utils/htmlcov/index.html
 ```
 
 ### Test Results
 
 ✅ **46 comprehensive tests** covering:
+
 - Music downloads (YouTube, SoundCloud)
 - Video downloads with file management
 - URL validation
@@ -295,19 +303,23 @@ open cm_util/htmlcov/index.html
 ## Available Commands
 
 ### Media Downloads
+
 - `dl-song` - Download audio from YouTube/SoundCloud as MP3
 - `dl-video` - Download video from YouTube
 - `dl-sc-user-likes` - Download all tracks a SoundCloud user has liked
 
 ### System & File Management
+
 - `open-apps` - Launch macOS applications (system, installed, or music apps)
 - `order-files` - Sort files in a directory by name, date, or size
 
 ### Configuration & History
+
 - `config` - View and manage configuration settings
 - `history` - View download history and manage duplicates
 
 ### Global Options
+
 - `--verbose`, `-v` - Enable verbose output (DEBUG level)
 - `--quiet`, `-q` - Suppress output except errors
 - `--dry-run` - Preview what would be downloaded without downloading
@@ -320,6 +332,7 @@ Run `mac-utils --help` or `mac-utils [command] --help` for detailed documentatio
 ### Usage Examples
 
 **Using full commands:**
+
 ```bash
 # Download a song from YouTube (simple positional argument!)
 mac-utils dl-song "https://youtube.com/watch?v=dQw4w9WgXcQ"
@@ -351,6 +364,7 @@ mac-utils order-files --path ~/Downloads --file-type mp3 --order-by date
 ```
 
 **Using short aliases** (if you set them up in the Bonus section above):
+
 ```bash
 # Download a song - super quick! ⚡
 mudls "https://youtube.com/watch?v=dQw4w9WgXcQ"
@@ -392,23 +406,23 @@ poetry run black --check .          # Check formatting
 poetry run black .                  # Auto-fix formatting
 poetry run isort --check-only .     # Check import sorting
 poetry run isort .                  # Auto-fix import sorting
-poetry run flake8 cm_util/
-poetry run mypy cm_util/
+poetry run flake8 mac_utils/
+poetry run mypy mac_utils/
 ```
 
 ### Project Structure
 
 ```md
 python3/
-├── cm_util/          # Main package
-│   ├── main.py       # CLI entry point
-│   ├── util.py       # Core utilities
-│   ├── music.py      # Music download logic
-│   ├── video.py      # Video download logic
-│   ├── config/       # Configuration files
-│   └── tests/        # Test suite
-├── scripts.py        # Test/coverage scripts
-└── pyproject.toml    # Poetry configuration
+├── mac_utils/ # Main package
+│ ├── main.py # CLI entry point
+│ ├── util.py # Core utilities
+│ ├── music.py # Music download logic
+│ ├── video.py # Video download logic
+│ ├── config/ # Configuration files
+│ └── tests/ # Test suite
+├── scripts.py # Test/coverage scripts
+└── pyproject.toml # Poetry configuration
 ```
 
 ### Key Features
