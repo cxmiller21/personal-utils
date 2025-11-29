@@ -1,6 +1,6 @@
 import unittest
 
-from cm_util.main import validate_url
+from mac_utils.main import validate_url
 
 
 class TestValidateUrl(unittest.TestCase):

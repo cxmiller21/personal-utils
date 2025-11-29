@@ -1,4 +1,4 @@
-from cm_util import __version__
+from mac_utils import __version__
 
 
 def test_version():

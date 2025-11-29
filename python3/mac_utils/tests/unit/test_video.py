@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from cm_util import video
+from mac_utils import video
 
 log = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ class TestMoveVideoFilesToDownloads(unittest.TestCase):
         downloads_folder.mkdir()
 
         # Should complete without error, just log a warning
-        with self.assertLogs("cm_util.video", level="WARNING") as cm:
+        with self.assertLogs("mac_utils.video", level="WARNING") as cm:
             video.move_video_files_to_downloads(str(downloads_folder))
         self.assertTrue(any("No video files found" in msg for msg in cm.output))
 
@@ -87,8 +87,8 @@ class TestMoveVideoFilesToDownloads(unittest.TestCase):
 
 
 class TestDownloadYoutubeVideo(unittest.TestCase):
-    @patch("cm_util.video.move_video_files_to_downloads")
-    @patch("cm_util.video.yt_dlp_download")
+    @patch("mac_utils.video.move_video_files_to_downloads")
+    @patch("mac_utils.video.yt_dlp_download")
     def test_download_youtube_video(self, mock_yt_dlp_download, mock_move_files):
         """Test downloading YouTube video"""
         url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
@@ -103,8 +103,8 @@ class TestDownloadYoutubeVideo(unittest.TestCase):
         # Verify files were moved
         mock_move_files.assert_called_once()
 
-    @patch("cm_util.video.move_video_files_to_downloads")
-    @patch("cm_util.video.yt_dlp_download")
+    @patch("mac_utils.video.move_video_files_to_downloads")
+    @patch("mac_utils.video.yt_dlp_download")
     def test_download_youtube_video_download_fails(self, mock_yt_dlp_download, mock_move_files):
         """Test that download failure propagates exception"""
         url = "https://www.youtube.com/watch?v=invalid"

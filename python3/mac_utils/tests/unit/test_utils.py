@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
-from cm_util import util
+from mac_utils import util
 
 log = logging.getLogger(__name__)
 
@@ -87,7 +87,7 @@ class TestYtDlProgressHook(unittest.TestCase):
         download_info = {"status": "finished", "filename": "example_audio.mp3"}
 
         # Capture the log output for testing
-        with self.assertLogs("cm_util.util", level="INFO") as cm:
+        with self.assertLogs("mac_utils.util", level="INFO") as cm:
             util.yt_dl_progress_hook(download_info)
 
         # Check that the correct log message was generated
@@ -120,8 +120,8 @@ class TestCleanUrl(unittest.TestCase):
 
 
 class TestOpenApps(unittest.TestCase):
-    @patch("cm_util.util.get_json_config")
-    @patch("cm_util.util.open_app")
+    @patch("mac_utils.util.get_json_config")
+    @patch("mac_utils.util.open_app")
     def test_open_installed_apps(self, mock_open_app, mock_get_json_config):
         mock_get_json_config.return_value = {
             "installed": {"apps": ["App1", "App2"], "path": "/path/to/installed/apps"}
@@ -135,8 +135,8 @@ class TestOpenApps(unittest.TestCase):
         ]
         mock_open_app.assert_has_calls(expected_calls)
 
-    @patch("cm_util.util.get_json_config")
-    @patch("cm_util.util.open_app")
+    @patch("mac_utils.util.get_json_config")
+    @patch("mac_utils.util.open_app")
     def test_open_system_apps(self, mock_open_app, mock_get_json_config):
         mock_get_json_config.return_value = {
             "system": {
@@ -209,10 +209,10 @@ class TestYtDlpDownload(unittest.TestCase):
     def setUp(self):
         self.yt_url = "https://youtube.com/some_video_url"
 
-    @patch("cm_util.util.tag_mp3_file")
-    @patch("cm_util.history_manager.add_to_history")
-    @patch("cm_util.history_manager.is_downloaded")
-    @patch("cm_util.util.get_yt_dl_options")
+    @patch("mac_utils.util.tag_mp3_file")
+    @patch("mac_utils.history_manager.add_to_history")
+    @patch("mac_utils.history_manager.is_downloaded")
+    @patch("mac_utils.util.get_yt_dl_options")
     @patch("yt_dlp.YoutubeDL")
     def test_download_mp3(
         self,
@@ -247,8 +247,8 @@ class TestYtDlpDownload(unittest.TestCase):
         mock_get_options.assert_called_once_with(media_type)
         mock_add_to_history.assert_called_once()
 
-    @patch("cm_util.history_manager.add_to_history")
-    @patch("cm_util.history_manager.is_downloaded")
+    @patch("mac_utils.history_manager.add_to_history")
+    @patch("mac_utils.history_manager.is_downloaded")
     @patch("yt_dlp.YoutubeDL")
     def test_download_video(self, mock_YoutubeDL, mock_is_downloaded, mock_add_to_history):
         # Mock history check
@@ -269,7 +269,7 @@ class TestYtDlpDownload(unittest.TestCase):
         ydl_instance.extract_info.assert_called_once_with(url, download=True)
         mock_add_to_history.assert_called_once()
 
-    @patch("cm_util.history_manager.is_downloaded")
+    @patch("mac_utils.history_manager.is_downloaded")
     @patch("yt_dlp.YoutubeDL")
     def test_download_error(self, mock_YoutubeDL, mock_is_downloaded):
         # Mock history check
@@ -289,8 +289,8 @@ class TestYtDlpDownload(unittest.TestCase):
 
         self.assertIn("Download failed", str(cm.exception))
 
-    @patch("cm_util.history_manager.is_downloaded")
-    @patch("cm_util.util.get_yt_dl_options")
+    @patch("mac_utils.history_manager.is_downloaded")
+    @patch("mac_utils.util.get_yt_dl_options")
     @patch("yt_dlp.YoutubeDL")
     def test_download_non_zero_error_code(
         self, mock_YoutubeDL, mock_get_options, mock_is_downloaded

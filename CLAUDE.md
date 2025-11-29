@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a personal CLI utility toolkit (`cm-util`) built with Python and Poetry. The primary purpose is to automate common tasks like downloading media from YouTube/SoundCloud, managing macOS applications, and organizing files.
+This is a personal CLI utility toolkit (`mac-utils`) built with Python and Poetry. The primary purpose is to automate common tasks like downloading media from YouTube/SoundCloud, managing macOS applications, and organizing files.
 
 ## Development Setup
 
@@ -14,12 +14,12 @@ This is a personal CLI utility toolkit (`cm-util`) built with Python and Poetry.
 cd python3
 poetry install
 
-# Run CLI (two methods)
-poetry run python cm_util/main.py --help
-poetry run cm-util --help
+# Run CLI (new simplified argument syntax)
+poetry run mac-utils --help
+poetry run mac-utils dl-song "https://youtube.com/watch?v=..."
 
 # Install in editable mode for system-wide access
-pip install -e .
+pipx install .
 ```
 
 ### Running Tests
@@ -29,7 +29,7 @@ poetry run test          # Run unit tests
 poetry run coverage      # Run coverage report
 ```
 
-Tests are located in `python3/cm_util/tests/unit/`. The test runner is defined in `python3/scripts.py`.
+Tests are located in `python3/mac_utils/tests/unit/`. The test runner is defined in `python3/scripts.py`.
 
 ### Version Management
 ```bash
@@ -63,7 +63,7 @@ The CLI is built with Typer and organized as follows:
 2. **Apple Music Integration**: MP3 files are automatically moved to the macOS Music app's auto-import folder at:
    `/Users/{username}/Music/Music/Media.localized/Automatically Add to Music.localized`
 
-3. **App Configuration**: Application lists are stored in `python3/cm_util/config/my-apps.json` with structure:
+3. **App Configuration**: Application lists are stored in `python3/mac_utils/config/my-apps.json` with structure:
    ```json
    {
      "installed": {"path": "...", "apps": [...]},
@@ -94,12 +94,18 @@ The CLI is built with Typer and organized as follows:
 - yt-dlp CLI reference: Lines 33-34 in `util.py` show equivalent CLI command
 
 ### Testing
-- Unit tests use pytest with 47+ comprehensive tests
+- Unit tests use pytest with 46 comprehensive tests
 - Test coverage includes: util.py, music.py, video.py, main.py (URL validation)
-- Test files are in `cm_util/tests/files/` (e.g., test MP3s)
+- Test files are in `mac_utils/tests/files/` (e.g., test MP3s)
 - Coverage config omits tests and `__init__.py` files (see `pyproject.toml`)
 - Run tests: `poetry run pytest` or `poetry run test`
 - Run coverage: `poetry run coverage`
+
+### CLI Argument Changes
+Commands now accept positional arguments for easier usage:
+- `mac-utils dl-song "https://youtube.com/..."` (no --url flag needed)
+- `mac-utils dl-video "https://youtube.com/..."` (no --url flag needed)
+- `mac-utils dl-sc-user-likes username` (no --username flag needed)
 
 ### Error Handling & Robustness
 - **Retry Logic**: `yt_dlp_download()` retries failed downloads 3 times (configurable)

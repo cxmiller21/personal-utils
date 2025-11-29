@@ -7,7 +7,7 @@ def run_test():
     """Run unittests"""
     # Ensure we're running from the python3 directory
     script_dir = Path(__file__).parent
-    subprocess.run(["pytest", "cm_util/tests/"], cwd=script_dir, check=True, timeout=300)
+    subprocess.run(["pytest", "mac_utils/tests/"], cwd=script_dir, check=True, timeout=300)
 
 
 def run_coverage():
@@ -15,7 +15,7 @@ def run_coverage():
     # Ensure we're running from the python3 directory
     script_dir = Path(__file__).parent
     subprocess.run(
-        ["python", "-m", "coverage", "run", "-m", "pytest", "cm_util/tests/"],
+        ["python", "-m", "coverage", "run", "-m", "pytest", "mac_utils/tests/"],
         cwd=script_dir,
         check=True,
         timeout=300,
