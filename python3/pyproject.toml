@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "cm-util"
+name = "mac-utils"
 version = "1.0.0"
-description = ""
+description = "macOS CLI utilities for downloading media and managing files"
 authors = ["Cooper <cooperxmiller@gmail.com>"]
 
 [tool.poetry.dependencies]
@@ -26,7 +26,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-cm-util = "cm_util.main:app"
+mac-utils = "mac_utils.main:app"
 test = "scripts:run_test"
 coverage = "scripts:run_coverage"
 

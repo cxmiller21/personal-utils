@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
-from cm_util import util
+from mac_utils import util
 
 log = logging.getLogger(__name__)
 

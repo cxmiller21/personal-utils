@@ -6,8 +6,8 @@ from typing import Optional
 
 import typer
 
-from cm_util import music, util, video
-from cm_util.config_manager import load_config, show_config
+from mac_utils import music, util, video
+from mac_utils.config_manager import load_config, show_config
 
 # Configure logging
 logging.basicConfig(
@@ -36,9 +36,9 @@ state = State()
 def version_callback(value: bool):
     """Show version and exit"""
     if value:
-        from cm_util import __version__
+        from mac_utils import __version__
 
-        typer.echo(f"cm-util version {__version__}")
+        typer.echo(f"mac-utils version {__version__}")
         raise typer.Exit()
 
 
@@ -141,9 +141,14 @@ def validate_url(url: str) -> tuple[bool, str | None]:
 
 @app.command()
 def dl_song(
-    url: str = typer.Option(..., "--url", "-u", help="URL wrapped in quotes '' to download")
+    url: str = typer.Argument(..., help="YouTube or SoundCloud URL to download")
 ) -> None:
-    """Download audio file and open in Apple Music"""
+    """Download audio file and open in Apple Music
+
+    Examples:
+        mac-utils dl-song "https://youtube.com/watch?v=..."
+        mac-utils dl-song "https://soundcloud.com/artist/track"
+    """
     is_valid, media_company = validate_url(url)
 
     if not is_valid or not media_company:
@@ -161,9 +166,13 @@ def dl_song(
 
 @app.command()
 def dl_video(
-    url: str = typer.Option(..., "--url", "-u", help="URL wrapped in quotes '' to download")
+    url: str = typer.Argument(..., help="YouTube URL to download")
 ) -> None:
-    """Download video file"""
+    """Download video file
+
+    Examples:
+        mac-utils dl-video "https://youtube.com/watch?v=..."
+    """
     is_valid, media_company = validate_url(url)
 
     if not is_valid or media_company != "YouTube":
@@ -179,11 +188,13 @@ def dl_video(
 
 @app.command()
 def dl_sc_user_likes(
-    username: str = typer.Option(
-        ..., "--username", "-un", help="SoundCloud username to download likes from"
-    )
+    username: str = typer.Argument(..., help="SoundCloud username to download likes from")
 ) -> None:
-    """Download a playlist of SoundCloud user likes and open them in Apple Music"""
+    """Download a playlist of SoundCloud user likes and open them in Apple Music
+
+    Examples:
+        mac-utils dl-sc-user-likes username
+    """
     log.info(f"Downloading SoundCloud user likes: {username}...")
     music.download_soundcloud_user_likes(
         username, dry_run=state.dry_run, output_dir=state.output_dir, force=state.force
@@ -221,7 +232,7 @@ def config(
     value: Optional[str] = typer.Option(None, "--value", help="Value to set for the key"),
 ) -> None:
     """Manage configuration settings"""
-    from cm_util.config_manager import set_config_value
+    from mac_utils.config_manager import set_config_value
 
     if show:
         show_config()
@@ -260,7 +271,7 @@ def history(
     ),
 ) -> None:
     """View and manage download history"""
-    from cm_util.history_manager import clear_history, show_history
+    from mac_utils.history_manager import clear_history, show_history
 
     if clear:
         if typer.confirm("Are you sure you want to clear all download history?"):

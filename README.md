@@ -1,6 +1,6 @@
-# My Personal CLI Utils
+# mac-utils
 
-A collection of CLI commands that I use to help automate common tasks like downloading media from YouTube/SoundCloud, managing macOS applications, and organizing files.
+A collection of macOS CLI utilities to automate common tasks like downloading media from YouTube/SoundCloud, managing applications, and organizing files.
 
 ## Platform Requirements
 
@@ -42,75 +42,201 @@ poetry install
 
 ```bash
 # View available commands
-poetry run cm-util --help
+poetry run mac-utils --help
 
-# Example: Download a song
-poetry run cm-util dl-song --url "https://youtube.com/watch?v=..."
+# Example: Download a song (simple!)
+poetry run mac-utils dl-song "https://youtube.com/watch?v=..."
 
 # Example: Download a video
-poetry run cm-util dl-video --url "https://youtube.com/watch?v=..."
+poetry run mac-utils dl-video "https://youtube.com/watch?v=..."
 ```
 
 ## Global Installation (Run from Anywhere)
 
-To use `cm-util` commands from any terminal without needing to be in the project directory:
+Choose one of these options to use `mac-utils` from any terminal without being in the project directory:
 
-### Option 1: Using pipx (Recommended)
+| Method | Best For | Updates After Code Changes | Setup Complexity |
+|--------|----------|---------------------------|------------------|
+| **pipx** | Production use | Need to run `pipx reinstall` | Easy |
+| **Shell Alias** (Poetry) | Development | Automatic ✨ | Very Easy |
+| **PATH Export** | Power users | Automatic | Medium |
 
-This installs the CLI tool globally while keeping it isolated:
+**Quick Recommendation:**
+- **Developing?** Use Option 2 (Shell Alias with Poetry)
+- **Just using the tool?** Use Option 1 (pipx)
+
+### Option 1: Using pipx (Recommended for Production Use)
+
+**Best for:** Installing as a standalone global tool that auto-updates with git pulls.
+
+pipx installs the CLI tool globally while keeping dependencies isolated:
 
 ```bash
-# Install pipx if you don't have it
+# 1. Install pipx if you don't have it
 brew install pipx
 pipx ensurepath
 
-# Install cm-util globally
-cd ./python3
+# 2. Navigate to the python3 directory
+cd ./personal-utils/python3
+
+# 3. Install mac-utils globally
 pipx install .
 
-# Now you can run from anywhere
-cm-util dl-song --url "https://youtube.com/..."
+# 4. Now you can run from anywhere!
+cd ~
+mac-utils dl-song "https://youtube.com/watch?v=..."
+mac-utils --version
 ```
 
-To update after making changes:
+**After making code changes:**
 ```bash
-cd ./python3
-pipx reinstall cm-util
+cd ./personal-utils/python3
+pipx reinstall mac-utils
 ```
 
-### Option 2: Add Poetry virtualenv to PATH
+---
 
-Add the Poetry virtualenv's bin directory to your shell PATH:
+### Option 2: Shell Alias with Poetry (Recommended for Development)
+
+**Best for:** Active development - no reinstall needed after code changes.
+
+Add an alias to your shell config file:
+
+#### For zsh (macOS default):
 
 ```bash
-# Find your virtualenv path
-cd ./python3
-poetry env info --path
+# Open your zsh config file
+vi ~/.zshrc
 
-# Add to your ~/.zshrc or ~/.bashrc:
-export PATH="$(poetry env info --path)/bin:$PATH"
+# Add this line at the end (replace with your actual path):
+alias mac-utils='poetry -C ./personal-utils/python3 run mac-utils'
+
+# Save and exit (Esc, :wq, Enter)
 
 # Reload your shell config
-source ~/.zshrc  # or source ~/.bashrc
-
-# Now you can run from anywhere
-cm-util dl-song --url "https://youtube.com/..."
+source ~/.zshrc
 ```
 
-### Option 3: Shell Alias
-
-Add an alias to your shell config (`~/.zshrc` or `~/.bashrc`):
+#### For bash:
 
 ```bash
-# Add this line to ~/.zshrc
-alias cm-util='poetry -C ./python3 run cm-util'
+# Open your bash config file
+vi ~/.bashrc
 
-# Reload your shell
+# Add this line at the end (replace with your actual path):
+alias mac-utils='poetry -C ./python3 run mac-utils'
+
+# Save and exit (Esc, :wq, Enter)
+
+# Reload your shell config
+source ~/.bashrc
+```
+
+**Now you can run from anywhere:**
+```bash
+cd ~
+mac-utils dl-song "https://youtube.com/watch?v=..."
+mac-utils --help
+```
+
+**Benefits:**
+- No reinstall needed after code changes
+- Always uses latest code from your repo
+- Perfect for active development
+
+---
+
+### Option 3: Add Poetry virtualenv to PATH
+
+**Best for:** Direct access to all Poetry-installed scripts.
+
+```bash
+# 1. Navigate to the python3 directory
+cd ./python3
+
+# 2. Get the virtualenv path
+poetry env info --path
+# Example output: /Users/coopermiller/Library/Caches/pypoetry/virtualenvs/mac-utils-xxxxx-py3.13
+
+# 3. Add to your shell config (~/.zshrc or ~/.bashrc)
+echo 'export PATH="/Users/coopermiller/Library/Caches/pypoetry/virtualenvs/mac-utils-xxxxx-py3.13/bin:$PATH"' >> ~/.zshrc
+
+# 4. Reload your shell
 source ~/.zshrc
 
-# Now you can run from anywhere
-cm-util dl-song --url "https://youtube.com/..."
+# 5. Now you can run from anywhere
+mac-utils dl-song "https://youtube.com/..."
 ```
+
+**Note:** You'll need to update the PATH if you recreate the virtualenv.
+
+---
+
+### Bonus: Create Shorter Command Aliases
+
+After setting up global installation (any option above), you can create convenient short aliases for frequently used commands:
+
+#### For zsh (macOS default):
+
+```bash
+# Open your zsh config file
+vi ~/.zshrc
+
+# Add these convenient aliases at the end:
+alias mudls='mac-utils dl-song'           # Download song
+alias mudlv='mac-utils dl-video'          # Download video
+
+# Save and exit (Esc, :wq, Enter)
+
+# Reload your shell config
+source ~/.zshrc
+```
+
+#### For bash:
+
+```bash
+# Open your bash config file
+vi ~/.bashrc
+
+# Add these convenient aliases at the end:
+alias mudls='mac-utils dl-song'           # Download song
+alias mudlv='mac-utils dl-video'          # Download video
+alias mudlsc='mac-utils dl-sc-user-likes' # Download SoundCloud likes
+alias muconfig='mac-utils config'         # Manage config
+alias muhistory='mac-utils history'       # View history
+
+# Save and exit (Esc, :wq, Enter)
+
+# Reload your shell config
+source ~/.bashrc
+```
+
+**Now you can use super short commands:**
+```bash
+# Download a song with just 5 characters!
+mudls "https://youtube.com/watch?v=dQw4w9WgXcQ"
+
+# Download a video
+mudlv "https://youtube.com/watch?v=..."
+
+# Download SoundCloud user likes
+mudlsc username
+
+# Check config
+muconfig --show
+
+# View download history
+muhistory --show --limit 10
+```
+
+**Customize your own aliases:**
+Feel free to create your own short aliases! Common patterns:
+- `mu` = mac-utils (prefix)
+- `dls` = download song
+- `dlv` = download video
+- Or use whatever makes sense to you!
+
+---
 
 ### Verify Installation
 
@@ -121,8 +247,8 @@ Test that it works from any directory:
 cd ~
 
 # Run a command
-cm-util --help
-cm-util --version
+mac-utils --help
+mac-utils --version
 ```
 
 ## Testing
@@ -189,38 +315,61 @@ open cm_util/htmlcov/index.html
 - `--force`, `-f` - Force download even if URL exists in history
 - `--version` - Show version information
 
-Run `cm-util --help` or `cm-util [command] --help` for detailed documentation.
+Run `mac-utils --help` or `mac-utils [command] --help` for detailed documentation.
 
 ### Usage Examples
 
+**Using full commands:**
 ```bash
-# Download a song from YouTube
-cm-util dl-song --url "https://youtube.com/watch?v=dQw4w9WgXcQ"
+# Download a song from YouTube (simple positional argument!)
+mac-utils dl-song "https://youtube.com/watch?v=dQw4w9WgXcQ"
 
 # Download with custom output directory
-cm-util --output-dir ~/Music/NewSongs dl-song --url "https://youtube.com/..."
+mac-utils --output-dir ~/Music/NewSongs dl-song "https://youtube.com/..."
 
 # Download a video (verbose mode)
-cm-util --verbose dl-video --url "https://youtube.com/watch?v=..."
+mac-utils --verbose dl-video "https://youtube.com/watch?v=..."
 
 # Preview without downloading (dry run)
-cm-util --dry-run dl-song --url "https://youtube.com/..."
+mac-utils --dry-run dl-song "https://youtube.com/..."
 
 # Force re-download even if already in history
-cm-util --force dl-song --url "https://youtube.com/..."
+mac-utils --force dl-song "https://youtube.com/..."
 
 # View download history
-cm-util history --limit 20
+mac-utils history --limit 20
 
 # View and edit configuration
-cm-util config
-cm-util config --set output_dir --value ~/Downloads/Music
+mac-utils config
+mac-utils config --set output_dir --value ~/Downloads/Music
 
-# Download SoundCloud user's liked tracks
-cm-util dl-sc-user-likes --username "your-username"
+# Download SoundCloud user's liked tracks (positional argument!)
+mac-utils dl-sc-user-likes username
 
 # Sort files in a directory
-cm-util order-files --path ~/Downloads --file-type mp3 --order-by date
+mac-utils order-files --path ~/Downloads --file-type mp3 --order-by date
+```
+
+**Using short aliases** (if you set them up in the Bonus section above):
+```bash
+# Download a song - super quick! ⚡
+mudls "https://youtube.com/watch?v=dQw4w9WgXcQ"
+
+# Download a video
+mudlv "https://youtube.com/watch?v=..."
+
+# With global options (still works!)
+mac-utils --verbose mudls "https://youtube.com/..."
+mac-utils --dry-run mudlv "https://youtube.com/..."
+
+# Download SoundCloud user likes
+mudlsc username
+
+# Check history
+muhistory --show --limit 10
+
+# Update config
+muconfig --set output_dir --value ~/Music
 ```
 
 ## Development

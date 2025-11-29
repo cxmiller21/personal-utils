@@ -2,7 +2,7 @@ import logging
 import unittest
 from unittest.mock import patch
 
-from cm_util import music
+from mac_utils import music
 
 log = logging.getLogger(__name__)
 

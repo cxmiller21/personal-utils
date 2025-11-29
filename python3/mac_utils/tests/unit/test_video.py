@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from cm_util import video
+from mac_utils import video
 
 log = logging.getLogger(__name__)
 
