@@ -140,9 +140,7 @@ def validate_url(url: str) -> tuple[bool, str | None]:
 
 
 @app.command()
-def dl_song(
-    url: str = typer.Argument(..., help="YouTube or SoundCloud URL to download")
-) -> None:
+def dl_song(url: str = typer.Argument(..., help="YouTube or SoundCloud URL to download")) -> None:
     """Download audio file and open in Apple Music
 
     Examples:
@@ -165,9 +163,7 @@ def dl_song(
 
 
 @app.command()
-def dl_video(
-    url: str = typer.Argument(..., help="YouTube URL to download")
-) -> None:
+def dl_video(url: str = typer.Argument(..., help="YouTube URL to download")) -> None:
     """Download video file
 
     Examples:
